@@ -1,0 +1,18 @@
+Welcome to The Neutron Build System
+
+Copyright (c) 2014-2019 The Neutron developers
+
+The Neutron Build System is free software: you can redistribute
+it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation, either
+version 3 of the License, or (at your option) any later version.
+
+This build system allows you to build the core Neutron wallet for
+a number of operating systems and flavors. The build system is
+continuously updated and integrated alongside new versions of the
+Neutron wallet.
+
+While it's not entirely clear, the Linux flavor not only builds
+native versions for the underlying Linux distribution, but also
+creates distribution independent binaries in the form of
+AppImages.
