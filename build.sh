@@ -304,7 +304,7 @@ if [[ $choices =~ "osx" ]]; then
 	title="Preparing MacOS X dependencies"
 	pjobs=("Building OSX cross toolchain" 8 \
 	       "Installing OpenSSL"           8 \
-	       "Installing BerkleyDB 5.3"     8 \
+	       "Installing BerkleyDB 4.8"     8 \
 	       "Installing MiniUPNPC"         8 \
 	       "Installing CURL"              8 \
 	       "Installing QT5"               8 \
@@ -338,8 +338,8 @@ if [[ $choices =~ "osx" ]]; then
 		todo=(10 "UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports install openssl 2> ../pkg-openssl.error 1> ../pkg-openssl.log")
 		build_step 3 "$(echo {30..35})" ../pkg-openssl.log ../pkg-openssl.error
 
-		todo=(5 "UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports install db53 2> ../pkg-db53.error 1> ../pkg-db53.log")
-		build_step 5 "$(echo {35..40})" ../pkg-db53.log ../pkg-db53.error
+		todo=(5 "UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports install db48 2> ../pkg-db48.error 1> ../pkg-db48.log")
+		build_step 5 "$(echo {35..40})" ../pkg-db48.log ../pkg-db48.error
 
 		todo=(5 "UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports install miniupnpc 2> ../pkg-miniupnpc.error 1> ../pkg-miniupnpc.log")
 		build_step 7 "$(echo {40..45})" ../pkg-miniupnpc.log ../pkg-miniupnpc.error
@@ -367,7 +367,7 @@ if [[ $choices =~ "osx" ]]; then
 	       "Preparing DMG archive"                8 \
 	       "Generating DMG archive"               8)
 
-	todo=(6 "unshare -r -m sh -c \"mount --bind $(pwd)/../../build-components/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/macx-clang/qmake.conf; CUSTOM_SDK_PATH=$(pwd)/../osxcross/target/SDK/MacOSX10.11.sdk CUSTOM_MIN_DEPLOYMENT_TARGET=10.11 qmake -spec macx-clang QMAKE_DEFAULT_INCDIRS=\"\" QMAKE_CC=$(pwd)/../osxcross/target/bin/x86_64-apple-darwin15-clang QMAKE_CXX=$(pwd)/../osxcross/target/bin/x86_64-apple-darwin15-clang++-libc++ QMAKE_LINK=$(pwd)/../osxcross/target/bin/x86_64-apple-darwin15-clang++-libc++ BOOST_INCLUDE_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/include/ BOOST_LIB_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/lib/ BOOST_LIB_SUFFIX=-mt BDB_INCLUDE_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/include/db53/ BDB_LIB_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/lib/db53/ BDB_LIB_SUFFIX=-5.3 neutron-qt.pro 2> ../qmake.error 1> ../qmake.log\"")
+	todo=(6 "unshare -r -m sh -c \"mount --bind $(pwd)/../../build-components/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/macx-clang/qmake.conf; CUSTOM_SDK_PATH=$(pwd)/../osxcross/target/SDK/MacOSX10.11.sdk CUSTOM_MIN_DEPLOYMENT_TARGET=10.11 qmake -spec macx-clang QMAKE_DEFAULT_INCDIRS=\"\" QMAKE_CC=$(pwd)/../osxcross/target/bin/x86_64-apple-darwin15-clang QMAKE_CXX=$(pwd)/../osxcross/target/bin/x86_64-apple-darwin15-clang++-libc++ QMAKE_LINK=$(pwd)/../osxcross/target/bin/x86_64-apple-darwin15-clang++-libc++ BOOST_INCLUDE_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/include/ BOOST_LIB_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/lib/ BOOST_LIB_SUFFIX=-mt BDB_INCLUDE_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/include/db48/ BDB_LIB_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/lib/db48/ BDB_LIB_SUFFIX=-4.8 neutron-qt.pro 2> ../qmake.error 1> ../qmake.log\"")
 	build_step 1 "$(echo {0..5})" ../qmake.log ../qmake.error
 
 	sed -i 's/\/usr\/include\/x86_64-linux-gnu\/qt5/..\/osxcross\/target\/macports\/pkgs\/opt\/local\/libexec\/qt5\/include/g' Makefile
