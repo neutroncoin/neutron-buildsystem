@@ -2,7 +2,8 @@
 #
 # This file is part of The Neutron Build System.
 #
-# Copyright (c) 2014-2019 The Neutron developers
+# Copyright (c) 2017-2018 The Swipp developers
+# Copyright (c) 2019 The Neutron developers
 #
 # The Neutron Build System is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published
