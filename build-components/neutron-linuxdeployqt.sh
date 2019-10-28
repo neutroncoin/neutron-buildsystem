@@ -43,11 +43,11 @@ mkdir -p $2.AppDir/usr/optional $2.AppDir/usr/optional/libstdc++
 cp $1/$2 $2.AppDir/usr/bin
 
 # Get and run linuxdeployqt
-wget --quiet -c https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
-chmod a+x linuxdeployqt-continuous-x86_64.AppImage
+wget --quiet -c https://github.com/probonopd/linuxdeployqt/releases/download/6/linuxdeployqt-6-x86_64.AppImage
+chmod a+x linuxdeployqt-6-x86_64.AppImage
 
 # Prepare AppDir
-./linuxdeployqt-continuous-x86_64.AppImage --appimage-extract
+./linuxdeployqt-6-x86_64.AppImage --appimage-extract
 ./squashfs-root/usr/bin/linuxdeployqt $2.AppDir/usr/bin/$2 -bundle-non-qt-libs
 
 # Workaround to increase compatibility with older systems; see https://github.com/darealshinji/AppImageKit-checkrt for details
