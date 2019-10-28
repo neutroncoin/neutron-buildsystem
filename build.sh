@@ -51,10 +51,6 @@ choose_flavors() {
 	       win32 "Windows [32 bit]" 0 \
 	       win64 "Windows [64 bit]" 0
 
-	if [ $? -eq 1 ]; then
-		exit 0
-	fi
-
 	return $?
 }
 
@@ -79,10 +75,6 @@ choose_tags() {
 
 	dialog --stdout --radiolist "Please choose which versions of Neutron you would like to build:" \
 	       17 54 10 "${tags_arguments[@]}"
-
-	if [ $? -eq 1 ]; then
-		exit 0
-	fi
 
 	return $?
 }
@@ -219,8 +211,16 @@ pjobs_result() {
 
 trap cleanup EXIT
 dialog --textbox build-components/welcome.txt 22 70
+
 choices=$(choose_flavors)
+if [[ $choices == "" ]]; then
+	exit 0
+fi
+
 version=$(choose_tags)
+if [[ $version == "" ]]; then
+	exit 0
+fi
 
 if [[ $choices =~ "linux" ]]; then
 	title="Building Linux flavor"
