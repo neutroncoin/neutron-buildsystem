@@ -229,7 +229,7 @@ if [[ $choices =~ "linux" ]]; then
 	       "Generating cross-distro QT wallet"      8 \
 	       "Generating cross-distro console wallet" 8)
 
-	install_dependencies build-essential make g++ libboost-all-dev libssl1.0-dev libdb5.3++-dev \
+	install_dependencies build-essential make g++ libboost-all-dev libssl1.0-dev libdb4.8++-dev \
 	                     libminiupnpc-dev libz-dev libcurl4-openssl-dev qt5-default \
 	                     qttools5-dev-tools
 
