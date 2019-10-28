@@ -53,8 +53,8 @@ chmod a+x linuxdeployqt-6-x86_64.AppImage
 # Workaround to increase compatibility with older systems; see https://github.com/darealshinji/AppImageKit-checkrt for details
 rm $2.AppDir/AppRun
 cp /usr/lib/x86_64-linux-gnu/libstdc++.so.6 $2.AppDir/usr/optional/libstdc++/
-wget -quiet -c https://github.com/darealshinji/AppImageKit-checkrt/releases/download/continuous/exec-x86_64.so -O $2.AppDir/usr/optional/exec.so
-wget -quiet -c https://github.com/darealshinji/AppImageKit-checkrt/releases/download/continuous/AppRun-patched-x86_64 -O $2.AppDir/AppRun
+wget --quiet -c https://github.com/darealshinji/AppImageKit-checkrt/releases/download/continuous/exec-x86_64.so -O $2.AppDir/usr/optional/exec.so
+wget --quiet -c https://github.com/darealshinji/AppImageKit-checkrt/releases/download/continuous/AppRun-patched-x86_64 -O $2.AppDir/AppRun
 chmod a+x $2.AppDir/AppRun
 
 # Copy in desktop descriptor and icon
