@@ -95,13 +95,17 @@ checkout() {
 
 #buildir_name, clone_dir, repo
 clone() {
-	if [ ! -d "build-$1" ]; then
-		mkdir build-$1
+	if [ ! -d "build" ]; then
+		mkdir build
 	fi
 
-	if [ ! -d "build-$1/$2" ]; then
+	if [ ! -d "build/$1" ]; then
+		mkdir build/$1
+	fi
+
+	if [ ! -d "build/$1/$2" ]; then
 		clear
-		git clone $3 build-$1/$2
+		git clone $3 build/$1/$2
 
 		if (($? != 0)); then
 			dialog --msgbox "Failed to clone repository $3" 7 70
@@ -234,7 +238,8 @@ if [[ $choices =~ "linux" ]]; then
 	                     qttools5-dev-tools
 
 	clone linux neutron $neutron_repo
-	pushd build-linux
+	pushd build
+	pushd linux
 	pushd neutron
 	version=$(choose_tags)
 	checkout
@@ -254,11 +259,13 @@ if [[ $choices =~ "linux" ]]; then
 
 	popd
 	popd
-	todo=(85 "../build-components/neutron-linuxdeployqt.sh neutron neutron-qt 2> linuxdeployqt-qt.log 1> /dev/null")
+
+	todo=(85 "../../build-components/neutron-linuxdeployqt.sh neutron Neutron-qt 2> linuxdeployqt-qt.log 1> /dev/null")
 	build_step 7 "$(echo {80..90})" linuxdeployqt-qt.log linuxdeployqt-qt.error
 
-	todo=(85 "../build-components/neutron-linuxdeployqt.sh neutron/src neutrond 2> linuxdeployqt-console.log 1> /dev/null")
+	todo=(85 "../../build-components/neutron-linuxdeployqt.sh neutron/src neutrond 2> linuxdeployqt-console.log 1> /dev/null")
 	build_step 7 "$(echo {90..100})" linuxdeployqt-console.log linuxdeployqt-console.error
+	popd
 fi
 
 if [[ $choices =~ "win32" || $choices =~ "win64" ]]; then
@@ -269,7 +276,8 @@ if [[ $choices =~ "win32" || $choices =~ "win64" ]]; then
 	       "Building CURL dependency"           8)
 
 	clone win32 neutron $neutron_repo
-	pushd build-win32
+	pushd build
+	pushd win32
 	pushd neutron
 	checkout
 	popd
@@ -279,7 +287,7 @@ if [[ $choices =~ "win32" || $choices =~ "win64" ]]; then
 	arg_mxe_path=.
 	arg_target=i686-w64-mingw32.static
 	targets="i686-w64-mingw32.static x86_64-w64-mingw32.static"
-	source "../../build-components/cross-compile-win.sh"
+	source "../../../build-components/cross-compile-win.sh"
 
 	todo=("make -n MXE_TARGETS=\"$targets\" cc | grep -o \"\[done\]\"" \
 	      "make MXE_TARGETS=\"$targets\" -j$(nproc) cc 2> ../makedep-cc.error 1> ../makedep-cc.log")
@@ -296,9 +304,11 @@ if [[ $choices =~ "win32" || $choices =~ "win64" ]]; then
 	todo=("make -n MXE_TARGETS=\"$targets\" curl | grep -o \"\[done\]\"" \
 	      "make MXE_TARGETS=\"$targets\" -j$(nproc) curl 2> ../makedep-curl.error 1> ../makedep-curl.log")
 	build_step 7 "$(echo {80..100})" ../makedep-curl.log ../makedep-curl.error
-fi
 
-# apt-get install libc++-dev libbz2-dev hfsprogs
+	popd
+	popd
+	popd
+fi
 
 if [[ $choices =~ "osx" ]]; then
 	title="Preparing MacOS X dependencies"
@@ -314,7 +324,8 @@ if [[ $choices =~ "osx" ]]; then
 	clone osx osxcross $osxcross_repo
 	clone osx libdmg-hfsplus $hfsplus_repo
 
-	pushd build-osx
+	pushd build
+	pushd osx
 	pushd neutron
 	checkout
 	popd
@@ -367,7 +378,7 @@ if [[ $choices =~ "osx" ]]; then
 	       "Preparing DMG archive"                8 \
 	       "Generating DMG archive"               8)
 
-	todo=(6 "unshare -r -m sh -c \"mount --bind $(pwd)/../../build-components/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/macx-clang/qmake.conf; CUSTOM_SDK_PATH=$(pwd)/../osxcross/target/SDK/MacOSX10.11.sdk CUSTOM_MIN_DEPLOYMENT_TARGET=10.11 qmake -spec macx-clang QMAKE_DEFAULT_INCDIRS=\"\" QMAKE_CC=$(pwd)/../osxcross/target/bin/x86_64-apple-darwin15-clang QMAKE_CXX=$(pwd)/../osxcross/target/bin/x86_64-apple-darwin15-clang++-libc++ QMAKE_LINK=$(pwd)/../osxcross/target/bin/x86_64-apple-darwin15-clang++-libc++ BOOST_INCLUDE_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/include/ BOOST_LIB_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/lib/ BOOST_LIB_SUFFIX=-mt BDB_INCLUDE_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/include/db48/ BDB_LIB_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/lib/db48/ BDB_LIB_SUFFIX=-4.8 neutron-qt.pro 2> ../qmake.error 1> ../qmake.log\"")
+	todo=(6 "unshare -r -m sh -c \"mount --bind $(pwd)/../../../build-components/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/macx-clang/qmake.conf; CUSTOM_SDK_PATH=$(pwd)/../osxcross/target/SDK/MacOSX10.11.sdk CUSTOM_MIN_DEPLOYMENT_TARGET=10.11 qmake -spec macx-clang QMAKE_DEFAULT_INCDIRS=\"\" QMAKE_CC=$(pwd)/../osxcross/target/bin/x86_64-apple-darwin15-clang QMAKE_CXX=$(pwd)/../osxcross/target/bin/x86_64-apple-darwin15-clang++-libc++ QMAKE_LINK=$(pwd)/../osxcross/target/bin/x86_64-apple-darwin15-clang++-libc++ BOOST_INCLUDE_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/include/ BOOST_LIB_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/lib/ BOOST_LIB_SUFFIX=-mt BDB_INCLUDE_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/include/db48/ BDB_LIB_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/lib/db48/ BDB_LIB_SUFFIX=-4.8 neutron-qt.pro 2> ../qmake.error 1> ../qmake.log\"")
 	build_step 1 "$(echo {0..5})" ../qmake.log ../qmake.error
 
 	sed -i 's/\/usr\/include\/x86_64-linux-gnu\/qt5/..\/osxcross\/target\/macports\/pkgs\/opt\/local\/libexec\/qt5\/include/g' Makefile
@@ -395,9 +406,12 @@ if [[ $choices =~ "osx" ]]; then
 
 	popd
 
-	todo(99 "unshare -r -m sh -c \"mount --bind osxcross/target/macports/pkgs/opt /opt; INSTALLNAMETOOL=osxcross/target/bin/x86_64-apple-darwin15-install_name_tool OTOOL=osxcross/target/bin/x86_64-apple-darwin15-otool STRIP=osxcross/target/bin/x86_64-apple-darwin15-strip ../build-components/macdeployqtplus -verbose 2 neutron/Neutron-Qt.app -add-resources neutron/src/qt/locale\"")
-	build_step 9 "$(echo {85..90})" macdeployqtplus.log macdeployqtplus.error
+	#todo(99 "unshare -r -m sh -c \"mount --bind osxcross/target/macports/pkgs/opt /opt; INSTALLNAMETOOL=osxcross/target/bin/x86_64-apple-darwin15-install_name_tool OTOOL=osxcross/target/bin/x86_64-apple-darwin15-otool STRIP=osxcross/target/bin/x86_64-apple-darwin15-strip ../../build-components/macdeployqtplus -verbose 2 neutron/Neutron-Qt.app -add-resources neutron/src/qt/locale\"")
+	#build_step 9 "$(echo {85..90})" macdeployqtplus.log macdeployqtplus.error
 
-	todo(1385 "PATH=$PATH:$(pwd)/libdmg-hfsplus/dmg:$(pwd)/libdmg-hfsplus/hfs ../build-components/create-dmg.sh dist/Neutron-Qt.app neutron-master")
+	#todo(1385 "PATH=$PATH:$(pwd)/libdmg-hfsplus/dmg:$(pwd)/libdmg-hfsplus/hfs ../../build-components/create-dmg.sh dist/Neutron-Qt.app neutron-master")
 	build_step 11 "$(echo {90..100})" create-dmg.log create-dmg.error
+
+	popd
+	popd
 fi
