@@ -244,12 +244,12 @@ if [[ $choices =~ "linux" ]]; then
 	build_step 1 "$(echo {0..5})" ../qmake.log ../qmake.error
 
 	sh share/genbuild.sh build/build.h
-	todo=("make -n 2> /dev/null" "make -j$(($(nproc)/2)) 2> ../make-qt.error 1> ../make-qt.log")
+	todo=("make -n 2> /dev/null" "make -j$($(nproc)) 2> ../make-qt.error 1> ../make-qt.log")
 	build_step 3 "$(echo {5..50})" ../make-qt.log ../make-qt.error
 
 	pushd src
 	todo=("make -n -f makefile.unix 2> /dev/null | grep \"^\(cc\|g++\)\"" \
-	      "make -j$(($(nproc)/2)) -f makefile.unix 2> ../../make-console.error 1> ../../make-console.log")
+	      "make -j$($(nproc)) -f makefile.unix 2> ../../make-console.error 1> ../../make-console.log")
 	build_step 5 "$(echo {50..80})" ../../make-console.log ../../make-console.error
 	strip neutrond
 
@@ -283,19 +283,19 @@ if [[ $choices =~ "win32" || $choices =~ "win64" ]]; then
 	source "../../build-components/cross-compile-win.sh"
 
 	todo=("make -n MXE_TARGETS=\"$targets\" cc | grep -o \"\[done\]\"" \
-	      "make MXE_TARGETS=\"$targets\" -j$(($(nproc)/2)) cc 2> ../makedep-cc.error 1> ../makedep-cc.log")
+	      "make MXE_TARGETS=\"$targets\" -j$($(nproc)) cc 2> ../makedep-cc.error 1> ../makedep-cc.log")
 	build_step 1 "$(echo {0..30})" ../makedep-cc.log ../makedep-cc.error
 
 	todo=("make -n MXE_TARGETS=\"$targets\" qtbase | grep -o \"\[done\]\"" \
-	      "make MXE_TARGETS=\"$targets\" -j$(($(nproc)/2)) qtbase 2> ../makedep-qtbase.error 1> ../makedep-qtbase.log")
+	      "make MXE_TARGETS=\"$targets\" -j$($(nproc)) qtbase 2> ../makedep-qtbase.error 1> ../makedep-qtbase.log")
 	build_step 3 "$(echo {30..50})" ../makedep-qtbase.log ../makedep-qtbase.error
 
 	todo=("make -n MXE_TARGETS=\"$targets\" qttools | grep -o \"\[done\]\"" \
-	      "make MXE_TARGETS=\"$targets\" -j$(($(nproc)/2)) qttools 2> ../makedep-qttools.error 1> ../makedep-qttools.log")
+	      "make MXE_TARGETS=\"$targets\" -j$($(nproc)) qttools 2> ../makedep-qttools.error 1> ../makedep-qttools.log")
 	build_step 5 "$(echo {50..80})" ../makedep-qtbase.log ../makedep-qtbase.error
 
 	todo=("make -n MXE_TARGETS=\"$targets\" curl | grep -o \"\[done\]\"" \
-	      "make MXE_TARGETS=\"$targets\" -j$(($(nproc)/2)) curl 2> ../makedep-curl.error 1> ../makedep-curl.log")
+	      "make MXE_TARGETS=\"$targets\" -j$($(nproc)) curl 2> ../makedep-curl.error 1> ../makedep-curl.log")
 	build_step 7 "$(echo {80..100})" ../makedep-curl.log ../makedep-curl.error
 fi
 
@@ -329,7 +329,7 @@ if [[ $choices =~ "osx" ]]; then
 
 	if [ ! -f ../.osx-prepared ]; then
 		# hard-coded 1000, no way to get the amount
-		todo=(1000 "UNATTENDED=1 JOBS=$(($(nproc)/2)) ./build.sh 2> ../makedep-toolchain.error 1> ../makedep-toolchain.log")
+		todo=(1000 "UNATTENDED=1 JOBS=$($(nproc)) ./build.sh 2> ../makedep-toolchain.error 1> ../makedep-toolchain.log")
 		build_step 1 "$(echo {0..30})" ../makedep-toolchain.log ../makedep-toolchain.error
 		PATH=$PATH:$(pwd)/target/bin
 
@@ -382,7 +382,7 @@ if [[ $choices =~ "osx" ]]; then
 	ln -s /usr/include/c++/v1 $(pwd)/../osxcross/target/SDK/MacOSX10.11.sdk/usr/include/c++/v1 &> /dev/null
 
 	sh share/genbuild.sh build/build.h
-	todo=("TARGET_OS=Darwin make -n 2> /dev/null" "TARGET_OS=Darwin make -j$(($(nproc)/2)) 2> ../make-qt.error 1> ../make-qt.log")
+	todo=("TARGET_OS=Darwin make -n 2> /dev/null" "TARGET_OS=Darwin make -j$($(nproc)) 2> ../make-qt.error 1> ../make-qt.log")
 	build_step 3 "$(echo {5..75})" ../make-qt.log ../make-qt.error
 
 	popd
@@ -391,7 +391,7 @@ if [[ $choices =~ "osx" ]]; then
 	todo=(22 "cmake . 2> ../cmake-libdmg-hfsplus.error 1> ../cmake-libdmg-hfsplus.log")
 	build_step 5 "$(echo {75..80})" ../cmake-libdmg-hfsplus.log ../cmake-libdmg-hfsplus.error
 
-	todo=(37 "make -j$(($(nproc)/2)) 2> ../make-libdmg-hfsplus.error 1> ../make-libdmg-hfsplus.log")
+	todo=(37 "make -j$($(nproc)) 2> ../make-libdmg-hfsplus.error 1> ../make-libdmg-hfsplus.log")
 	build_step 7 "$(echo {80..85})" ../make-libdmg-hfsplus.log ../make-libdmg-hfsplus.error
 
 	popd
