@@ -58,7 +58,7 @@ wget --quiet -c https://github.com/darealshinji/AppImageKit-checkrt/releases/dow
 chmod a+x $2.AppDir/AppRun
 
 # Copy in desktop descriptor and icon
-printf "[Desktop Entry]\nType=Application\nName=neutron-qt\nGenericName=neutron-qt\nComment=Store and transfer Neutron coins\nIcon=neutron\nExec=../usr/bin/$2\nTerminal=false\nCategories=Network;Finance;" > $2.AppDir/neutron-qt.desktop
+printf "[Desktop Entry]\nType=Application\nName=$2\nGenericName=$2\nComment=Store and transfer Neutron coins\nIcon=neutron\nExec=../usr/bin/$2\nTerminal=false\nCategories=Network;Finance;" > $2.AppDir/$2.desktop
 cp neutron/src/qt/res/icons/neutron.png $2.AppDir/
 
 # Manually invoke appimagetool so that the modified AppRun stays intact
