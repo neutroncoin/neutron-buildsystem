@@ -122,8 +122,7 @@ install_dependencies() {
 	missingdeps=${missingdeps:1}
 
 	if [ -n "$missingdeps" ]; then
-		dialog --msgbox "The dependencies '$missingdeps' are missing and need to be installed " \
-		       "before running this script." 8 70
+		dialog --msgbox "The dependencies '$missingdeps' are missing and need to be installed before running this script." 8 70
 		exit 1
 	fi
 }
