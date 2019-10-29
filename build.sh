@@ -101,12 +101,12 @@ clone() {
 	fi
 
 	if [ ! -d "build/$1" ]; then
-		mkdir build/$1
+		mkdir build/$1-$version
 	fi
 
-	if [ ! -d "build/$1/$2" ]; then
+	if [ ! -d "build/$1-version/$2" ]; then
 		clear
-		git clone $3 build/$1/$2
+		git clone $3 build/$1-$version/$2
 
 		if (($? != 0)); then
 			dialog --msgbox "Failed to clone repository $3" 7 70
@@ -240,7 +240,7 @@ if [[ $choices =~ "linux" ]]; then
 
 	clone linux neutron $neutron_repo
 	pushd build
-	pushd linux
+	pushd linux-$version
 	pushd neutron
 	version=$(choose_tags)
 	checkout
@@ -278,7 +278,7 @@ if [[ $choices =~ "win32" || $choices =~ "win64" ]]; then
 
 	clone win32 neutron $neutron_repo
 	pushd build
-	pushd win32
+	pushd win32-$version
 	pushd neutron
 	checkout
 	popd
@@ -326,7 +326,7 @@ if [[ $choices =~ "osx" ]]; then
 	clone osx libdmg-hfsplus $hfsplus_repo
 
 	pushd build
-	pushd osx
+	pushd osx-$version
 	pushd neutron
 	checkout
 	popd
