@@ -104,7 +104,7 @@ clone() {
 		mkdir build/$1-$version
 	fi
 
-	if [ ! -d "build/$1-version/$2" ]; then
+	if [ ! -d "build/$1-$version/$2" ]; then
 		clear
 		git clone $3 build/$1-$version/$2
 
