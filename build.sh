@@ -244,7 +244,6 @@ if [[ $choices =~ "linux" ]]; then
 	pushd build
 	pushd linux-$version
 	pushd neutron
-	version=$(choose_tags)
 	checkout
 
 	todo=(6 "qmake -Wnone neutron-qt.pro 2> ../qmake.error 1> ../qmake.log")
