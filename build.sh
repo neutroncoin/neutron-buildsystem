@@ -65,7 +65,8 @@ choose_tags() {
 
 	for i in $tags; do
 		if [ $i = "master" ]; then
-			tags_arguments=($i "Master version ($(git ls-remote $neutron_repo | grep master | cut -f1 | cut -b 1-7))" off "${tags_arguments[@]}")
+			hash=$(git ls-remote $neutron_repo | grep master | cut -f1 | cut -b 1-7)
+			tags_arguments=($hash "Master version ($hash)" off "${tags_arguments[@]}")
 		else
 			tags_arguments=($i "Tagged release $i" off "${tags_arguments[@]}")
 		fi
