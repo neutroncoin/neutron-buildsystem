@@ -251,12 +251,12 @@ if [[ $choices =~ "linux" ]]; then
 
 	sh share/genbuild.sh build/build.h
 	todo=("make -n 2> /dev/null" "make -j$(nproc) 2> ../make-qt.error 1> ../make-qt.log")
-	build_step 3 "$(echo {5..50})" ../make-qt.log ../make-qt.error
+	build_step 3 "$(echo {5..60})" ../make-qt.log ../make-qt.error
 
 	pushd src
 	todo=("make -n -f makefile.unix 2> /dev/null | grep \"^\(cc\|g++\)\"" \
 	      "make -j$(nproc) -f makefile.unix 2> ../../make-console.error 1> ../../make-console.log")
-	build_step 5 "$(echo {50..80})" ../../make-console.log ../../make-console.error
+	build_step 5 "$(echo {60..80})" ../../make-console.log ../../make-console.error
 	strip neutrond
 
 	popd
@@ -266,7 +266,8 @@ if [[ $choices =~ "linux" ]]; then
 	build_step 7 "$(echo {80..90})" linuxdeployqt-qt.log linuxdeployqt-qt.error
 
 	todo=(85 "../../build-components/neutron-linuxdeployqt.sh neutron/src neutrond 2> linuxdeployqt-console.log 1> /dev/null")
-	build_step 7 "$(echo {90..100})" linuxdeployqt-console.log linuxdeployqt-console.error
+	build_step 9 "$(echo {90..100})" linuxdeployqt-console.log linuxdeployqt-console.error
+	popd
 	popd
 fi
 
