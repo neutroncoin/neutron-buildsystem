@@ -240,6 +240,7 @@ gather_releases() {
 
 	cp build/linux-$version/neutrond-x86_64.AppImage releases/neutrond-$version-x86_64.AppImage &> /dev/null
 	cp build/linux-$version/Neutron-qt-x86_64.AppImage releases/Neutron-qt-$version-x86_64.AppImage &> /dev/null
+	cp build/osx-$version/Neutron-qt-v3.0.4.dmg releases/ &> /dev/null
 
 }
 
@@ -248,6 +249,7 @@ dialog --textbox build-components/welcome.txt 22 70
 
 # First we check for general dependencies....
 install_dependencies wget
+
 
 choices=$(choose_flavors)
 if [[ $choices == "" ]]; then
@@ -352,7 +354,12 @@ if [[ $choices =~ "osx" ]]; then
 	       "Installing MiniUPNPC"         8 \
 	       "Installing CURL"              8 \
 	       "Installing QT5"               8 \
-	       "Installing Boost"             8)
+	       "Installing Boost"             8 \
+	       "Installing ICU"               8 \
+	       "Preparing libdmg-hfsplus"     8 \
+	       "Building libdmg-hfsplus"      8)
+
+	install_dependencies clang cmake libxml2-dev libc++-dev libbz2-dev hfsprogs
 
 	clone osx neutron $neutron_repo
 	clone_toolchain osx-osxcross $osxcross_repo
@@ -363,7 +370,8 @@ if [[ $choices =~ "osx" ]]; then
 	pushd neutron
 	checkout
 	popd
-	pushd osxcross
+	popd
+	pushd osx-osxcross
 
 	if [ ! -f ../.osx-prepared ]; then
 		pushd tarballs
@@ -371,51 +379,68 @@ if [[ $choices =~ "osx" ]]; then
 		popd
 	fi
 
+	PATH=$PATH:$(pwd)/target/bin
+
 	if [ ! -f ../.osx-prepared ]; then
-		# hard-coded 1000, no way to get the amount
-		todo=(1000 "UNATTENDED=1 JOBS=$(nproc) ./build.sh 2> ../makedep-toolchain.error 1> ../makedep-toolchain.log")
-		build_step 1 "$(echo {0..30})" ../makedep-toolchain.log ../makedep-toolchain.error
-		PATH=$PATH:$(pwd)/target/bin
+		# hard-coded 2300, no way to get the amount
+		todo=(2300 "UNATTENDED=1 JOBS=$(nproc) ./build.sh 2> ../osx-makedep-toolchain.error 1> ../osx-makedep-toolchain.log")
+		build_step 1 "$(echo {0..30})" ../osx-makedep-toolchain.log ../osx-makedep-toolchain.error
 
 		# This configures the mirror
-		UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports search openssl &> /dev/null
+		UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports search openssl10 &> /dev/null
 
-		todo=(10 "UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports install openssl 2> ../pkg-openssl.error 1> ../pkg-openssl.log")
-		build_step 3 "$(echo {30..35})" ../pkg-openssl.log ../pkg-openssl.error
+		todo=(10 "UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports install openssl10 2> ../osx-pkg-openssl.error 1> ../osx-pkg-openssl.log")
+		build_step 3 "$(echo {30..35})" ../osx-pkg-openssl.log ../osx-pkg-openssl.error
 
-		todo=(5 "UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports install db48 2> ../pkg-db48.error 1> ../pkg-db48.log")
-		build_step 5 "$(echo {35..40})" ../pkg-db48.log ../pkg-db48.error
+		todo=(5 "UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports install db48 2> ../osx-pkg-db48.error 1> ../osx-pkg-db48.log")
+		build_step 5 "$(echo {35..40})" ../osx-pkg-db48.log ../osx-pkg-db48.error
 
-		todo=(5 "UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports install miniupnpc 2> ../pkg-miniupnpc.error 1> ../pkg-miniupnpc.log")
-		build_step 7 "$(echo {40..45})" ../pkg-miniupnpc.log ../pkg-miniupnpc.error
+		todo=(5 "UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports install miniupnpc 2> ../osx-pkg-miniupnpc.error 1> ../osx-pkg-miniupnpc.log")
+		build_step 7 "$(echo {40..45})" ../osx-pkg-miniupnpc.log ../osx-pkg-miniupnpc.error
 
-		todo=(63 "UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports install curl 2> ../pkg-curl.error 1> ../pkg-curl.log")
-		build_step 9 "$(echo {45..50})" ../pkg-curl.log ../pkg-curl.error
+		todo=(63 "UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports install curl 2> ../osx-pkg-curl.error 1> ../osx-pkg-curl.log")
+		build_step 9 "$(echo {45..50})" ../osx-pkg-curl.log ../osx-pkg-curl.error
 
-		todo=(319 "UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports install qt57 2> ../pkg-qt57.error 1> ../pkg-qt57.log")
-		build_step 11 "$(echo {50..90})" ../pkg-qt57.log ../pkg-qt57.error
+		todo=(319 "UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports install qt57 2> ../osx-pkg-qt57.error 1> ../osx-pkg-qt57.log")
+		build_step 11 "$(echo {50..80})" ../osx-pkg-qt57.log ../osx-pkg-qt57.error
 
-		todo=(12 "UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports install boost 2> ../pkg-boost.error 1> ../pkg-boost.log")
-		build_step 13 "$(echo {90..100})" ../pkg-boost.log ../pkg-boost.error
+		todo=(12 "UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports install boost169 2> ../osx-pkg-boost.error 1> ../osx-pkg-boost.log")
+		build_step 13 "$(echo {80..85})" ../osx-pkg-boost.log ../osx-pkg-boost.error
 
-		pjobs_result ../.osx-prepared
+		todo=(12 "UNATTENDED=1 MACOSX_DEPLOYMENT_TARGET=10.11 osxcross-macports install icu58 2> ../osx-pkg-icu.error 1> ../osx-pkg-icu.log")
+		build_step 15 "$(echo {85..90})" ../osx-pkg-icu.log ../osx-pkg-icu.error
+
+		popd
+		cp osx-osxcross/target/macports/pkgs/opt/local/libexec/icu58/lib/libic*.58.dylib osx-osxcross/target/macports/pkgs/opt/local/lib/
+		pushd osx-libdmg-hfsplus
+
+		todo=(22 "cmake . 2> ../osx-cmake-libdmg-hfsplus.error 1> ../osx-cmake-libdmg-hfsplus.log")
+		build_step 17 "$(echo {90..95})" ../osx-cmake-libdmg-hfsplus.log ../osx-cmake-libdmg-hfsplus.error
+
+		todo=(37 "make -j$(nproc) 2> ../osx-make-libdmg-hfsplus.error 1> ../osx-make-libdmg-hfsplus.log")
+		build_step 19 "$(echo {95..100})" ../osx-make-libdmg-hfsplus.log ../osx-make-libdmg-hfsplus.error
+
+		popd
+		pjobs_result .osx-prepared
+		pushd osx-osxcross
 	fi
 
 	popd
+	pushd osx-$version
 	pushd neutron
 
 	title="Building MacOS X flavor"
 	pjobs=("Creating build files from QMAKE file" 8 \
 	       "Building native QT wallet"            8 \
-	       "Preparing libdmg-hfsplus"             8 \
-	       "Building libdmg-hfsplus"              8 \
 	       "Preparing DMG archive"                8 \
 	       "Generating DMG archive"               8)
 
-	todo=(6 "unshare -r -m sh -c \"mount --bind $(pwd)/../../../build-components/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/macx-clang/qmake.conf; CUSTOM_SDK_PATH=$(pwd)/../osxcross/target/SDK/MacOSX10.11.sdk CUSTOM_MIN_DEPLOYMENT_TARGET=10.11 qmake -spec macx-clang QMAKE_DEFAULT_INCDIRS=\"\" QMAKE_CC=$(pwd)/../osxcross/target/bin/x86_64-apple-darwin15-clang QMAKE_CXX=$(pwd)/../osxcross/target/bin/x86_64-apple-darwin15-clang++-libc++ QMAKE_LINK=$(pwd)/../osxcross/target/bin/x86_64-apple-darwin15-clang++-libc++ BOOST_INCLUDE_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/include/ BOOST_LIB_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/lib/ BOOST_LIB_SUFFIX=-mt BDB_INCLUDE_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/include/db48/ BDB_LIB_PATH=$(pwd)/../osxcross/target/macports/pkgs/opt/local/lib/db48/ BDB_LIB_SUFFIX=-4.8 neutron-qt.pro 2> ../qmake.error 1> ../qmake.log\"")
+	sed -i 's/CC=$$QMAKE_CC CXX=$$QMAKE_CXX/CC=$$QMAKE_CC AR=$$first(QMAKE_AR) CXX=$$QMAKE_CXX/g' neutron-qt.pro
+
+	todo=(6 "unshare -r -m sh -c \"mount --bind $(pwd)/../../../build-components/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/macx-clang/qmake.conf; CUSTOM_SDK_PATH=$(pwd)/../../osx-osxcross/target/SDK/MacOSX10.11.sdk CUSTOM_MIN_DEPLOYMENT_TARGET=10.11 qmake -spec macx-clang QMAKE_DEFAULT_INCDIRS=\"\" QMAKE_CC=$(pwd)/../../osx-osxcross/target/bin/x86_64-apple-darwin15-clang QMAKE_CXX=$(pwd)/../../osx-osxcross/target/bin/x86_64-apple-darwin15-clang++-libc++ QMAKE_LINK=$(pwd)/../../osx-osxcross/target/bin/x86_64-apple-darwin15-clang++-libc++ BOOST_INCLUDE_PATH=$(pwd)/../../osx-osxcross/target/macports/pkgs/opt/local/libexec/boost169/include/ BOOST_LIB_PATH=$(pwd)/../../osx-osxcross/target/macports/pkgs/opt/local/libexec/boost169/lib/ BOOST_LIB_SUFFIX=-mt BDB_INCLUDE_PATH=$(pwd)/../../osx-osxcross/target/macports/pkgs/opt/local/include/db48/ BDB_LIB_PATH=$(pwd)/../../osx-osxcross/target/macports/pkgs/opt/local/lib/db48/ BDB_LIB_SUFFIX=-4.8 OPENSSL_INCLUDE_PATH=$(pwd)/../../osx-osxcross/target/macports/pkgs/opt/local/include/openssl-1.0 OPENSSL_LIB_PATH=$(pwd)/../../osx-osxcross/target/macports/pkgs/opt/local/lib/openssl-1.0/ MINIUPNPC_INCLUDE_PATH=$(pwd)/../../osx-osxcross/target/macports/pkgs/opt/local/include/ MINIUPNPC_LIB_PATH=$(pwd)/../../osx-osxcross/target/macports/pkgs/opt/local/lib/ neutron-qt.pro 2> ../qmake.error 1> ../qmake.log\"")
 	build_step 1 "$(echo {0..5})" ../qmake.log ../qmake.error
 
-	sed -i 's/\/usr\/include\/x86_64-linux-gnu\/qt5/..\/osxcross\/target\/macports\/pkgs\/opt\/local\/libexec\/qt5\/include/g' Makefile
+	sed -i 's/\/usr\/include\/x86_64-linux-gnu\/qt5/..\/..\/osx-osxcross\/target\/macports\/pkgs\/opt\/local\/libexec\/qt5\/include/g' Makefile
 	sed -i 's/-o build\/moc_bitcoingui.cpp/-DQ_OS_MAC -o build\/moc_bitcoingui.cpp/g' Makefile
 	sed -i 's/ -L\/usr\/lib\/x86_64-linux-gnu//g' Makefile
 	sed -i 's/ -lQt5PrintSupport//g' Makefile
@@ -423,28 +448,25 @@ if [[ $choices =~ "osx" ]]; then
 	sed -i 's/ -lQt5Gui//g' Makefile
 	sed -i 's/ -lQt5Network//g' Makefile
 	sed -i 's/ -lQt5Core//g' Makefile
-	ln -s /usr/include/c++/v1 $(pwd)/../osxcross/target/SDK/MacOSX10.11.sdk/usr/include/c++/v1 &> /dev/null
+	ln -s /usr/include/c++/v1 $(pwd)/../../osx-osxcross/target/SDK/MacOSX10.11.sdk/usr/include/c++/v1 &> /dev/null
+	sed -i 's/ -I..\/..\/osx-osxcross\/target\/macports\/pkgs\/opt\/local\/include / -I..\/..\/osx-osxcross\/target\/macports\/pkgs\/opt\/local\/include\/openssl-1.0 -I..\/..\/osx-osxcross\/target\/macports\/pkgs\/opt\/local\/include /g' Makefile
+	sed -i 's/ -L\/home\/adamw\/neutron-buildsystem\/build\/osx-v3.0.4\/neutron\/..\/..\/osx-osxcross\/target\/macports\/pkgs\/opt\/local\/lib\/ / -L\/home\/adamw\/neutron-buildsystem\/build\/osx-v3.0.4\/neutron\/..\/..\/osx-osxcross\/target\/macports\/pkgs\/opt\/local\/lib\/openssl-1.0\/ -L\/home\/adamw\/neutron-buildsystem\/build\/osx-v3.0.4\/neutron\/..\/..\/osx-osxcross\/target\/macports\/pkgs\/opt\/local\/lib\/ /g' Makefile
+
+	# Code fixes for clang and OSX
+	sed -i 's/clock_gettime( CLOCK_REALTIME,&tsp);/clock_serv_t cclock; mach_timespec_t mts; host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, \&cclock); clock_get_time(cclock, \&mts); mach_port_deallocate(mach_task_self(), cclock); tsp.tv_sec = mts.tv_sec; tsp.tv_nsec = mts.tv_nsec;/g' src/util.cpp
+	sed -i ':a;N;$!ba;s/#include "ui_interface.h"\n#include <boost\/algorithm\/string\/join.hpp>/#include "ui_interface.h"\n#include <mach\/clock.h>\n#include <mach\/mach.h>\n#include <boost\/algorithm\/string\/join.hpp>/g' src/util.cpp
 
 	sh share/genbuild.sh build/build.h
 	todo=("TARGET_OS=Darwin make -n 2> /dev/null" "TARGET_OS=Darwin make -j$(nproc) 2> ../make-qt.error 1> ../make-qt.log")
 	build_step 3 "$(echo {5..75})" ../make-qt.log ../make-qt.error
 
 	popd
-	pushd libdmg-hfsplus
 
-	todo=(22 "cmake . 2> ../cmake-libdmg-hfsplus.error 1> ../cmake-libdmg-hfsplus.log")
-	build_step 5 "$(echo {75..80})" ../cmake-libdmg-hfsplus.log ../cmake-libdmg-hfsplus.error
+	todo=(99 "unshare -r -m sh -c \"mount --bind ../osx-osxcross/target/macports/pkgs/opt /opt; INSTALLNAMETOOL=../osx-osxcross/target/bin/x86_64-apple-darwin15-install_name_tool OTOOL=../osx-osxcross/target/bin/x86_64-apple-darwin15-otool STRIP=../osx-osxcross/target/bin/x86_64-apple-darwin15-strip ../../build-components/macdeployqtplus -verbose 2 neutron/Neutron-qt.app -add-resources neutron/src/qt/locale 2> macdeployqtplus.error 1> macdeployqtplus.log\"")
+	build_step 5 "$(echo {85..90})" macdeployqtplus.log macdeployqtplus.error
 
-	todo=(37 "make -j$(nproc) 2> ../make-libdmg-hfsplus.error 1> ../make-libdmg-hfsplus.log")
-	build_step 7 "$(echo {80..85})" ../make-libdmg-hfsplus.log ../make-libdmg-hfsplus.error
-
-	popd
-
-	#todo(99 "unshare -r -m sh -c \"mount --bind osxcross/target/macports/pkgs/opt /opt; INSTALLNAMETOOL=osxcross/target/bin/x86_64-apple-darwin15-install_name_tool OTOOL=osxcross/target/bin/x86_64-apple-darwin15-otool STRIP=osxcross/target/bin/x86_64-apple-darwin15-strip ../../build-components/macdeployqtplus -verbose 2 neutron/Neutron-Qt.app -add-resources neutron/src/qt/locale\"")
-	#build_step 9 "$(echo {85..90})" macdeployqtplus.log macdeployqtplus.error
-
-	#todo(1385 "PATH=$PATH:$(pwd)/libdmg-hfsplus/dmg:$(pwd)/libdmg-hfsplus/hfs ../../build-components/create-dmg.sh dist/Neutron-Qt.app neutron-master")
-	build_step 11 "$(echo {90..100})" create-dmg.log create-dmg.error
+	todo=(1385 "PATH=$PATH:$(pwd)/../osx-libdmg-hfsplus/dmg:$(pwd)/../osx-libdmg-hfsplus/hfs ../../build-components/create-dmg.sh dist/Neutron-qt.app Neutron-qt-$version 2> create-dmg.error 1> create-dmg.log")
+	build_step 7 "$(echo {90..100})" create-dmg.log create-dmg.error
 
 	popd
 	popd

@@ -160,7 +160,7 @@ class FrameworkInfo(object):
 class ApplicationBundleInfo(object):
     def __init__(self, path):
         self.path = path
-        appName = "Neutron-Qt"
+        appName = "Neutron-qt"
         self.binaryPath = os.path.join(path, "Contents", "MacOS", appName)
 
         if not os.path.exists(self.binaryPath):
@@ -650,7 +650,7 @@ if len(config.volname) == 1:
 else:
     volname = app_bundle_name
 
-target = os.path.join("dist", "Neutron-Qt.app")
+target = os.path.join("dist", "Neutron-qt.app")
 
 if verbose >= 2:
     print("+ Copying source bundle +")
