@@ -92,7 +92,7 @@ checkout() {
 		dialog --msgbox "Failed to check out $version in repository $3" 7 70
 		exit 1
 	else
-		git pull --force
+		git pull --force &> /dev/null
 	fi
 }
 
