@@ -246,6 +246,9 @@ gather_releases() {
 trap cleanup EXIT
 dialog --textbox build-components/welcome.txt 22 70
 
+# First we check for general dependencies....
+install_dependencies wget
+
 choices=$(choose_flavors)
 if [[ $choices == "" ]]; then
 	exit 0
