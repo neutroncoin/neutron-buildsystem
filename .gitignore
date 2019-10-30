@@ -1,3 +1,2 @@
-build-linux
-build-win*
-build-osx
+build
+releases
