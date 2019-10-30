@@ -117,6 +117,23 @@ clone() {
 	fi
 }
 
+#clone_dir, repo
+clone_toolchain() {
+	if [ ! -d "build" ]; then
+		mkdir build
+	fi
+
+        if [ ! -d "build/$1" ]; then
+                clear
+                git clone $2 build/$1
+
+                if (($? != 0)); then
+                        dialog --msgbox "Failed to clone repository $2" 7 70
+                        exit 1
+                fi
+        fi
+}
+
 install_dependencies() {
 	for i in $@; do
 		dpkg -l $i &> /dev/null
@@ -324,8 +341,8 @@ if [[ $choices =~ "osx" ]]; then
 	       "Installing Boost"             8)
 
 	clone osx neutron $neutron_repo
-	clone osx osxcross $osxcross_repo
-	clone osx libdmg-hfsplus $hfsplus_repo
+	clone_toolchain osx-osxcross $osxcross_repo
+	clone_toolchain osx-libdmg-hfsplus $hfsplus_repo
 
 	pushd build
 	pushd osx-$version
