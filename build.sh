@@ -232,6 +232,17 @@ pjobs_result() {
 	fi
 }
 
+#version
+gather_releases() {
+	if [ ! -d "releases" ]; then
+		mkdir releases
+	fi
+
+	cp build/linux-$version/neutrond-x86_64.AppImage releases/neutrond-$version-x86_64.AppImage &> /dev/null
+	cp build/linux-$version/Neutron-qt-x86_64.AppImage releases/Neutron-qt-$version-x86_64.AppImage &> /dev/null
+
+}
+
 trap cleanup EXIT
 dialog --textbox build-components/welcome.txt 22 70
 
@@ -435,3 +446,5 @@ if [[ $choices =~ "osx" ]]; then
 	popd
 	popd
 fi
+
+gather_releases
