@@ -102,7 +102,7 @@ clone() {
 		mkdir build
 	fi
 
-	if [ ! -d "build/$1" ]; then
+	if [ ! -d "build/$1-$version" ]; then
 		mkdir build/$1-$version
 	fi
 
