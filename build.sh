@@ -414,9 +414,11 @@ if [[ $choices =~ "win32" || $choices =~ "win64" ]]; then
 fi
 
 if [[ $choices =~ "win64" ]]; then
+	echo
 fi
 
 if [[ $choices =~ "win64" ]]; then
+	echo
 fi
 
 if [[ $choices =~ "osx" ]]; then
