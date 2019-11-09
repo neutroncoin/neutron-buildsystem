@@ -26,7 +26,8 @@ neutron_repo="https://github.com/neutroncoin/neutron.git"
 osxcross_repo="https://github.com/tpoechtrager/osxcross.git"
 osx_sdk="https://github.com/phracker/MacOSX-SDKs/releases/download/MacOSX10.11.sdk/MacOSX10.11.sdk.tar.xz"
 hfsplus_repo="https://github.com/andreas56/libdmg-hfsplus.git"
-mxe_repo="https://github.com/mxe/mxe.git"
+dist=$(lsb_release -i | cut -f2 -d$'\t')
+dist_version=$(lsb_release -c | cut -f2 -d$'\t')
 return_code=0
 
 pushd () {
@@ -39,7 +40,7 @@ popd () {
 
 cleanup() {
 	kill $(jobs -p) &> /dev/null
-	clear
+	echo
 }
 
 choose_flavors() {
@@ -134,7 +135,7 @@ clone_toolchain() {
         fi
 }
 
-install_dependencies() {
+collect_dependencies() {
 	for i in $@; do
 		dpkg -l $i &> /dev/null
 
@@ -142,12 +143,55 @@ install_dependencies() {
 			missingdeps+=" $i"
 		fi
 	done
+}
 
+install_dependencies() {
 	missingdeps=${missingdeps:1}
+	authenticated="false"
 
 	if [ -n "$missingdeps" ]; then
-		dialog --msgbox "The dependencies '$missingdeps' are missing and need to be installed before running this script." 8 70
-		exit 1
+		dialog --yesno "The dependencies '$missingdeps' are missing and need to be installed. Would you like to install them?" 8 70
+
+		if [ $? -eq 0 ]; then
+			if [[ $USER == "root" ]]; then
+				authenticated="true"
+			elif [[ $dist == "Debian" ]]; then
+				clear
+				echo Please provide root password to install dependencies
+
+				if [ $? -eq 0 ]; then
+					authenticated="true"
+					apt_command=""
+
+					if [ ! -f /etc/apt/sources.list.d/mxe.list ]; then
+						apt_command+="echo \"deb file://$(pwd)/build-components/mxe-repo $dist_version main\" > /etc/apt/sources.list.d/mxe.list && "
+					fi
+
+					apt_command+="apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 86B72ED9 && "
+					apt_command+="apt-get -qy update && apt-get -qy --no-install-recommends install $missingdeps"
+					su -c "$apt_command"
+				fi
+			else
+				groups | grep "sudo"
+
+				# If we are in the sudo group we assume we have root privileges
+				if [ $? -eq 0 ]; then
+					echo Please provide your password to install dependencies as administrator
+
+					if [ $? -eq 0]; then
+						authenticated="true"
+					fi
+				else
+					dialog --msgbox "You are not in the sudo group and can therefore not install any dependencies. Please install the required dependencies as super user before executing this script." 8 70
+				fi
+
+				if [[ $authenticated == "false" ]]; then
+					exit 1
+				fi
+			fi
+		else
+			exit 1
+		fi
 	fi
 }
 
@@ -186,7 +230,7 @@ build_dialog() {
 
 		if [ -f "$3" ] && [ -s "$3" ]; then
 			if (( $(cat $3 | grep -E "error|ERROR" | wc -l) > 0 )); then
-			    kill $6 &> /dev/null
+				kill $6 &> /dev/null
 				return 1
 			fi
 		fi
@@ -247,10 +291,6 @@ gather_releases() {
 trap cleanup EXIT
 dialog --textbox build-components/welcome.txt 22 70
 
-# First we check for general dependencies....
-install_dependencies wget
-
-
 choices=$(choose_flavors)
 if [[ $choices == "" ]]; then
 	exit 0
@@ -261,6 +301,37 @@ if [[ $version == "" ]]; then
 	exit 0
 fi
 
+# First we collect all general dependencies....
+collect_dependencies wget git autoconf automake make pkg-config cmake g++
+
+# Next collect the dependencies for the active choices
+if [[ $choices =~ "linux" ]]; then
+	collect_dependencies build-essential libboost-all-dev libssl1.0-dev libdb4.8++-dev \
+	                     libminiupnpc-dev libz-dev libcurl4-openssl-dev qt5-default \
+	                     qttools5-dev-tools
+fi
+
+if [[ $choices =~ "win32" || $choices =~ "win64" ]]; then
+	collect_dependencies autopoint bison bzip2 flex gettext gperf intltool libffi-dev libtool \
+                             libltdl-dev libxml-parser-perl patch perl p7zip-full python ruby sed unzip \
+                             xz-utils g++-multilib libc6-dev-i386 libtool-bin \
+	                     mxe-source
+fi
+
+if [[ $choices =~ "win32" ]]; then
+	collect_dependencies mxe-i686-w64-mingw32.static-qtbase
+fi
+
+if [[ $choices =~ "win64" ]]; then
+	collect_dependencies mxe-x86-64-w64-mingw32.static-qtbase
+fi
+
+if [[ $choices =~ "osx" ]]; then
+	collect_dependencies clang libxml2-dev libc++-dev libbz2-dev hfsprogs
+fi
+
+install_dependencies
+
 if [[ $choices =~ "linux" ]]; then
 	title="Building Linux flavor"
 	pjobs=("Creating build files from QMAKE file"   8 \
@@ -268,10 +339,6 @@ if [[ $choices =~ "linux" ]]; then
 	       "Building native console wallet"         8 \
 	       "Generating cross-distro QT wallet"      8 \
 	       "Generating cross-distro console wallet" 8)
-
-	install_dependencies build-essential make g++ libboost-all-dev libssl1.0-dev libdb4.8++-dev \
-	                     libminiupnpc-dev libz-dev libcurl4-openssl-dev qt5-default \
-	                     qttools5-dev-tools
 
 	clone linux neutron $neutron_repo
 	pushd build
@@ -346,6 +413,12 @@ if [[ $choices =~ "win32" || $choices =~ "win64" ]]; then
 	popd
 fi
 
+if [[ $choices =~ "win64" ]]; then
+fi
+
+if [[ $choices =~ "win64" ]]; then
+fi
+
 if [[ $choices =~ "osx" ]]; then
 	title="Preparing MacOS X dependencies"
 	pjobs=("Building OSX cross toolchain" 8 \
@@ -358,8 +431,6 @@ if [[ $choices =~ "osx" ]]; then
 	       "Installing ICU"               8 \
 	       "Preparing libdmg-hfsplus"     8 \
 	       "Building libdmg-hfsplus"      8)
-
-	install_dependencies clang cmake libxml2-dev libc++-dev libbz2-dev hfsprogs
 
 	clone osx neutron $neutron_repo
 	clone_toolchain osx-osxcross $osxcross_repo
