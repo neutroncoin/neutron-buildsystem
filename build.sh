@@ -193,6 +193,7 @@ install_dependencies() {
 
 					if [ $? -eq 0]; then
 						authenticated="true"
+						sudo $apt_command
 					fi
 				else
 					dialog --msgbox "You are not in the sudo group and can therefore not install any dependencies. Please install the required dependencies as super user before executing this script." 8 70
