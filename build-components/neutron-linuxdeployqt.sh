@@ -48,7 +48,7 @@ chmod a+x linuxdeployqt-6-x86_64.AppImage
 
 # Prepare AppDir
 ./linuxdeployqt-6-x86_64.AppImage --appimage-extract
-./squashfs-root/usr/bin/linuxdeployqt $2.AppDir/usr/bin/$2 -bundle-non-qt-libs
+./squashfs-root/usr/bin/linuxdeployqt $2.AppDir/usr/bin/$2 -bundle-non-qt-libs -unsupported-allow-new-glibc
 
 # Workaround to increase compatibility with older systems; see https://github.com/darealshinji/AppImageKit-checkrt for details
 rm $2.AppDir/AppRun
