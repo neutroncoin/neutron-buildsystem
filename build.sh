@@ -176,6 +176,7 @@ install_dependencies() {
 
 			if [[ $USER == "root" ]]; then
 				authenticated="true"
+				su -c "$apt_command"
 			elif [[ $dist == "Debian" ]]; then
 				clear
 				echo Please provide root password to install dependencies
