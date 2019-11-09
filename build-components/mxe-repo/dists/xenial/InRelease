@@ -1,0 +1,39 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+Origin: MXE packages
+Label: MXE packages
+Codename: xenial
+Date: Mon, 10 Jun 2019 02:38:02 UTC
+Architectures: amd64
+Components: main
+Description: MXE packages
+MD5Sum:
+ fcd365f88d8e8f2e54cc0089dd3bceae 1890594 main/binary-amd64/Packages
+ ae4a9f8989263aa010a84bc61e04aecb 249417 main/binary-amd64/Packages.gz
+ 428b3e0e916dfdf0f2256b66f9614a2b 103 main/binary-amd64/Release
+SHA1:
+ d298fd142905254b38b2775a9ff1bb4f0e6ef070 1890594 main/binary-amd64/Packages
+ cac5f8615bab95e1cb6af90995e522f1ee0089c4 249417 main/binary-amd64/Packages.gz
+ 84982764138cb98cacacbefceb01a2c0edd268f6 103 main/binary-amd64/Release
+SHA256:
+ 51df8ae5ebaec41bbafa9497e917aad55052738cb3ca34b6df49c59475ccb453 1890594 main/binary-amd64/Packages
+ b4443e0333f1f06b9f9108a4cf901ca071034d5b3d0a1bcf638abae5c210b59e 249417 main/binary-amd64/Packages.gz
+ 196c434aa0de627b9f629b229756fd02bf04d076aa07635bd937001851902ea6 103 main/binary-amd64/Release
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJc/cKLAAoJEMa/dYozo6J2H9QP/RxMpO3EsCdvoVnQH+ZGGJ09
+kyksHED4efsa3fKNZCnFd9Y3C2D4tXI4O+pD3RyPQhzYVNjKT8Y5v4AW4keC05Bm
+vyiJkGlcgTYy3qH8lAdFdNFgAoGSljpnVdt8AeJkPjbCy7JYU1dKihIziKEpCWdO
+G/IZKgf7Iehr65jLCGaOTGrtAKNxYU/m/H6I0ZOsmVOLT16bHTYzWZhDUhObGCQp
+WHJH2h8UR5KgktCfQ0x6Ol5Y6fq7dGy57kj+8GW71byx9wcPLEs/tFtI8g5AbCKt
+ipkzTeynQSbEHVWJDgYlJYEWYSOsP7kdT7M1x7YeOlxFHwonMKKJGmck5ql167sr
+ueABH5uVdqFbukAP2fw1j/glfcOswsPYNJ+R/tNnrnjj5ui9jDYZX1fvpZUjhrW0
+B4L6A136v9FYMrA7crQI/X72tyE7g+6WkzB39FGMRb1ZbJCTrbEak1V0zyGF2wy6
+jrFXu9wKRS1Fu5Rcyp7BluQoCXRXwb4bog3kq7RfHWZsHCK9JSK1kucTzD1GZZtq
+37fq3FxMgnVeeO/ZXV2wXVd3qKQkhImJPBlPNdhiqczlsJjrPs+6bq4oYASdXSig
+TbnF6T+glyApN20I7KSIFhmAtSKpdZ+WTlW3fcz49eSglCJDr7XloQE5z8gQWuu9
+nlbsm/nMft+6PEgynUz+
+=YFDC
+-----END PGP SIGNATURE-----

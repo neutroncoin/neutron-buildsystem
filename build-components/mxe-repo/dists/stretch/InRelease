@@ -1,0 +1,39 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+Origin: MXE packages
+Label: MXE packages
+Codename: stretch
+Date: Mon, 10 Jun 2019 03:27:20 UTC
+Architectures: amd64
+Components: main
+Description: MXE packages
+MD5Sum:
+ c215abfafc0dca6030160765c3ca4bb9 1891603 main/binary-amd64/Packages
+ 6d29bda8bd3ef0d8c14be491779a0870 249147 main/binary-amd64/Packages.gz
+ 428b3e0e916dfdf0f2256b66f9614a2b 103 main/binary-amd64/Release
+SHA1:
+ 5d1ad379389c1b312e85c4889b30492b0580f85c 1891603 main/binary-amd64/Packages
+ 2cd45631a7d9ed7cfe3900fb511f916a4be45eb2 249147 main/binary-amd64/Packages.gz
+ 84982764138cb98cacacbefceb01a2c0edd268f6 103 main/binary-amd64/Release
+SHA256:
+ 203f0717f6e539c2be7b366edc71cca4ab2b7ae4ef0c8266e606b079728f1e4b 1891603 main/binary-amd64/Packages
+ de0f0932b4b833f07fa2ce18a13ab16a4188c95aea7d7472cc342fbcc8219967 249147 main/binary-amd64/Packages.gz
+ 196c434aa0de627b9f629b229756fd02bf04d076aa07635bd937001851902ea6 103 main/binary-amd64/Release
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJc/c4ZAAoJEMa/dYozo6J20XsP/RZmVJQvftyriQMl8LbJL6pk
+42m6nuYHnZzDsa9TP0/tuALN4GH1KLlDkHlTHKM7gWxltcaKR8oX8ITedrdWj4j0
+PD35xurXb5R8+mRjNlnl8OxEWPyGwtm5uaGs+jOxK5y1rUwSqCELhDliDNrMEHlF
+ncltoUlaFmSrQUi6k60N5P9Qxrl9UCKiZBBRlA9f2ce3iIHaM6tZ+zB3erefvoe6
+YTNDKAcjqQ8/OBPFdzhc1d/BMNE0Vy8V4zplexUKhmv6VXj+G9cVc33rqMm70QOB
+lRZQUSbT3VYQuSI56mcgFqYTG8Tso89iEcuz++dI+PknkcCnhLjd/vwGDdvgHUbR
+k8L3Xma4KvElqA8yN5PmVhRtH6aYTXSoTTCcYaFiyq+M/eQVWQ6L2v4jbT21KJ++
+U3sHMHFozcz2sjfNOzYMrTB8kp/dO9n0jjw8ZfNeJxZcou7FWxvs2DsxYCWUtX1g
+P8MrcRkxzmIpctr/Tzl08TdWFdx3qHKlDVYkHRYAgZlTLHZwqUKRe/8zpSVlL9Os
+kTuRYbyvmP9KAR/jO9NYgOcvGng2B8UcEud0wQA/SyEItLRFUbSlJ5do8FU/JKXw
+u7+R9w91j+rKt74HyMIwJoxNH+fhWZ0D6R22Sj3kTOoppw+5xHeb0NXrep/nwFKx
+9dFBRoK6v3A1/NPZTazD
+=vfZd
+-----END PGP SIGNATURE-----

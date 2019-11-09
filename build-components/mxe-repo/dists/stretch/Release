@@ -1,0 +1,19 @@
+Origin: MXE packages
+Label: MXE packages
+Codename: stretch
+Date: Mon, 10 Jun 2019 03:27:20 UTC
+Architectures: amd64
+Components: main
+Description: MXE packages
+MD5Sum:
+ c215abfafc0dca6030160765c3ca4bb9 1891603 main/binary-amd64/Packages
+ 6d29bda8bd3ef0d8c14be491779a0870 249147 main/binary-amd64/Packages.gz
+ 428b3e0e916dfdf0f2256b66f9614a2b 103 main/binary-amd64/Release
+SHA1:
+ 5d1ad379389c1b312e85c4889b30492b0580f85c 1891603 main/binary-amd64/Packages
+ 2cd45631a7d9ed7cfe3900fb511f916a4be45eb2 249147 main/binary-amd64/Packages.gz
+ 84982764138cb98cacacbefceb01a2c0edd268f6 103 main/binary-amd64/Release
+SHA256:
+ 203f0717f6e539c2be7b366edc71cca4ab2b7ae4ef0c8266e606b079728f1e4b 1891603 main/binary-amd64/Packages
+ de0f0932b4b833f07fa2ce18a13ab16a4188c95aea7d7472cc342fbcc8219967 249147 main/binary-amd64/Packages.gz
+ 196c434aa0de627b9f629b229756fd02bf04d076aa07635bd937001851902ea6 103 main/binary-amd64/Release

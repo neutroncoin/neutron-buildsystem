@@ -1,0 +1,19 @@
+Origin: MXE packages
+Label: MXE packages
+Codename: bionic
+Date: Mon, 10 Jun 2019 03:25:42 UTC
+Architectures: amd64
+Components: main
+Description: MXE packages
+MD5Sum:
+ 84520296254843632ea6e2865b5f3f53 1890611 main/binary-amd64/Packages
+ 6856d4ee17137613d85b018fa6385380 249338 main/binary-amd64/Packages.gz
+ 428b3e0e916dfdf0f2256b66f9614a2b 103 main/binary-amd64/Release
+SHA1:
+ fc2aa8064dae10797d46dee3df4217884b8e9b4e 1890611 main/binary-amd64/Packages
+ 494adef70135957aeb44b89ab85cba8615d56918 249338 main/binary-amd64/Packages.gz
+ 84982764138cb98cacacbefceb01a2c0edd268f6 103 main/binary-amd64/Release
+SHA256:
+ f9c1466527635b344f71d70d9aae5f78b21a86c932138bef79c85c4b076f4094 1890611 main/binary-amd64/Packages
+ 77dd442aa1e5e2b5f2ef71a6640acbc629fb2c81de85ef5f4b42e0489e899fb9 249338 main/binary-amd64/Packages.gz
+ 196c434aa0de627b9f629b229756fd02bf04d076aa07635bd937001851902ea6 103 main/binary-amd64/Release
