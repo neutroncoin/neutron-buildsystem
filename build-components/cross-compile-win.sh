@@ -29,7 +29,7 @@
 # make MXE_TARGETS="i686-w64-mingw32.static" curl
 #
 # $1: Location of MXE
-# $2: Target (should be either i686-w64-mingw32.static or x86_64-w64-mingw32.static)
+# $2: Target (should be either i686-w64-mingw32.static, x86_64-w64-mingw32.static or x86_64-w64-minigw32.static.posix)
 # --compile: Compile main executable
 # --compile-dependencies: Compile dependencies
 
@@ -65,7 +65,9 @@ win_qmake() {
 		MINIUPNPC_INCLUDE_PATH=$MXE_INCLUDE_PATH \
 		MINIUPNPC_LIB_PATH=$MXE_LIB_PATH \
 		CURL_LIB_PATH=$MXE_LIB_PATH \
-		QMAKE_LRELEASE=$1/usr/$2/qt5/bin/lrelease neutron-qt.pro
+		QMAKE_LRELEASE=$1/usr/$2/qt5/bin/lrelease \
+		MXE=1 USE_QRCODE=1 USE_UPNP=1 RELEASE=1 USE_BUILD_INFOP=1 \
+		neutron-qt.pro
 }
 
 win_leveldb() {
