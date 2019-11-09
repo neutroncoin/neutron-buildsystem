@@ -153,6 +153,27 @@ install_dependencies() {
 		dialog --yesno "The dependencies '$missingdeps' are missing and need to be installed. Would you like to install them?" 8 70
 
 		if [ $? -eq 0 ]; then
+			apt_command=""
+
+			if [ ! -f /etc/apt/sources.list.d/mxe.list ] && [[ $choices =~ "win32" || $choices =~ "win64" ]]; then
+				apt_command+="echo \"deb file://$(pwd)/build-components/mxe-repo $dist_version main\" > /etc/apt/sources.list.d/mxe.list && "
+				apt_command+="apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 86B72ED9 && "
+			fi
+
+			tmp_dist_version=$dist_version
+
+			# Special side-case to support Debian
+			if [[ $dist == "Debian" ]]; then
+				tmp_dist_version="bionic"
+			fi
+
+			if [ ! -f /etc/apt/sources.list.d/bitcoin.list ] && [[ $missingdeps =~ "libdb4.8++-dev" ]] && [[ $choices =~ "linux" ]]; then
+				apt_command+="echo \"deb http://ppa.launchpad.net/bitcoin/bitcoin/ubuntu $tmp_dist_version main\" > /etc/apt/sources.list.d/bitcoin.list && "
+				apt_command+="apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C70EF1F0305A1ADB9986DBD8D46F45428842CE5E && "
+			fi
+
+			apt_command+="apt-get -qy update && apt-get -qy --no-install-recommends install $missingdeps"
+
 			if [[ $USER == "root" ]]; then
 				authenticated="true"
 			elif [[ $dist == "Debian" ]]; then
@@ -161,14 +182,6 @@ install_dependencies() {
 
 				if [ $? -eq 0 ]; then
 					authenticated="true"
-					apt_command=""
-
-					if [ ! -f /etc/apt/sources.list.d/mxe.list ]; then
-						apt_command+="echo \"deb file://$(pwd)/build-components/mxe-repo $dist_version main\" > /etc/apt/sources.list.d/mxe.list && "
-					fi
-
-					apt_command+="apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 86B72ED9 && "
-					apt_command+="apt-get -qy update && apt-get -qy --no-install-recommends install $missingdeps"
 					su -c "$apt_command"
 				fi
 			else
