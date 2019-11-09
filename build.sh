@@ -321,7 +321,7 @@ collect_dependencies wget git autoconf automake make pkg-config cmake g++
 if [[ $choices =~ "linux" ]]; then
 	collect_dependencies build-essential libboost-all-dev libssl1.0-dev libdb4.8++-dev \
 	                     libminiupnpc-dev libz-dev libcurl4-openssl-dev qt5-default \
-	                     qttools5-dev-tools
+	                     qttools5-dev-tools qt5-qmake
 fi
 
 if [[ $choices =~ "win32" || $choices =~ "win64" ]]; then
