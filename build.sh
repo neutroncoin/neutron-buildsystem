@@ -137,7 +137,7 @@ clone_toolchain() {
 
 collect_dependencies() {
 	for i in $@; do
-		dpkg -l $i &> /dev/null
+		dpkg -s $i &> /dev/null
 
 		if [ $? -eq 1 ]; then
 			missingdeps+=" $i"
