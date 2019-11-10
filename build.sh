@@ -334,11 +334,11 @@ if [[ $choices =~ "win32" || $choices =~ "win64" ]]; then
 fi
 
 if [[ $choices =~ "win32" ]]; then
-	collect_dependencies mxe-i686-w64-mingw32.static-qtbase
+	collect_dependencies mxe-i686-w64-mingw32.static-qtbase mxe-i686-w64-mingw32.static-qttools
 fi
 
 if [[ $choices =~ "win64" ]]; then
-	collect_dependencies mxe-x86-64-w64-mingw32.static-qtbase
+	collect_dependencies mxe-x86-64-w64-mingw32.static-qtbase mxe-x86-64-w64-mingw32.static-qttools
 fi
 
 if [[ $choices =~ "osx" ]]; then
