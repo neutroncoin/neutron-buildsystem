@@ -334,11 +334,13 @@ if [[ $choices =~ "win32" || $choices =~ "win64" ]]; then
 fi
 
 if [[ $choices =~ "win32" ]]; then
-	collect_dependencies mxe-i686-w64-mingw32.static-qtbase mxe-i686-w64-mingw32.static-qttools
+	collect_dependencies mxe-i686-w64-mingw32.static-qtbase mxe-i686-w64-mingw32.static-qttools mxe-i686-w64-mingw32.static-boost \
+	                     mxe-i686-w64-mingw32.static-miniupnpc mxe-i686-w64-mingw32.static-libqrencode
 fi
 
 if [[ $choices =~ "win64" ]]; then
-	collect_dependencies mxe-x86-64-w64-mingw32.static-qtbase mxe-x86-64-w64-mingw32.static-qttools
+	collect_dependencies mxe-x86-64-w64-mingw32.static-qtbase mxe-x86-64-w64-mingw32.static-qttools mxe-x86-64-w64-mingw32.static-boost \
+	                     mxe-x86-64-w64-mingw32.static-miniupnpc mxe-x86-64-w64-mingw32.static-libqrencode
 fi
 
 if [[ $choices =~ "osx" ]]; then
@@ -386,54 +388,62 @@ if [[ $choices =~ "linux" ]]; then
 	popd
 fi
 
-if [[ $choices =~ "win32" || $choices =~ "win64" ]]; then
-	title="Preparing Windows dependencies"
-	pjobs=("Building GCC and build environment" 8 \
-	       "Building QT base dependencies"      8 \
-	       "Building QT tools dependencies"     8 \
-	       "Building CURL dependency"           8)
+#target, flavor_version
+build_windows() {
+	target="$1"
+	title="Preparing Windows $2 flavor"
 
-	clone win32 neutron $neutron_repo
+	clone win$2 neutron $neutron_repo
 	pushd build
-	pushd win32-$version
+	pushd win$2-$version
 	pushd neutron
 	checkout
 	popd
-	clone win32 mxe $mxe_repo
-	pushd mxe
+	popd
 
-	arg_mxe_path=.
-	arg_target=i686-w64-mingw32.static
-	targets="i686-w64-mingw32.static x86_64-w64-mingw32.static"
-	source "../../../build-components/cross-compile-win.sh"
+	if [ ! -f win$2-db-4.8.30 ]; then
+		tar xvfz ../build-components/dependencies/db-4.8.30.tar.gz &> /dev/null
+		mv db-4.8.30 win$2-db-4.8.30 &> /dev/null
+		mkdir win$2-db-4.8.30/build_mxe &> /dev/null
+	fi
 
-	todo=("make -n MXE_TARGETS=\"$targets\" cc | grep -o \"\[done\]\"" \
-	      "make MXE_TARGETS=\"$targets\" -j$(nproc) cc 2> ../makedep-cc.error 1> ../makedep-cc.log")
-	build_step 1 "$(echo {0..30})" ../makedep-cc.log ../makedep-cc.error
+	if [ ! -f .win$2-prepared ]; then
+		pjobs=("Buidling BerkleyDB 4.8" 8)
+		pushd win$2-db-4.8.30
+		pushd build_mxe
+		todo=(854 "../../../build-components/cross-compile-win.sh /usr/lib/mxe $target --berkleydb 2> ../../win$2-db.error 1> ../../win$2-db.log")
+		build_step 1 "$(echo {0..100})" ../../win$2-db.log ../../win$2-db.error
+		popd
+		popd
+	fi
 
-	todo=("make -n MXE_TARGETS=\"$targets\" qtbase | grep -o \"\[done\]\"" \
-	      "make MXE_TARGETS=\"$targets\" -j$(nproc) qtbase 2> ../makedep-qtbase.error 1> ../makedep-qtbase.log")
-	build_step 3 "$(echo {30..50})" ../makedep-qtbase.log ../makedep-qtbase.error
+	title="Building Windows $2 flavor"
+	pjobs=("Creating build files from QMAKE file" 8 \
+	       "Building native QT wallet"            8)
 
-	todo=("make -n MXE_TARGETS=\"$targets\" qttools | grep -o \"\[done\]\"" \
-	      "make MXE_TARGETS=\"$targets\" -j$(nproc) qttools 2> ../makedep-qttools.error 1> ../makedep-qttools.log")
-	build_step 5 "$(echo {50..80})" ../makedep-qtbase.log ../makedep-qtbase.error
+	pushd win$2-$version
+	pushd neutron
 
-	todo=("make -n MXE_TARGETS=\"$targets\" curl | grep -o \"\[done\]\"" \
-	      "make MXE_TARGETS=\"$targets\" -j$(nproc) curl 2> ../makedep-curl.error 1> ../makedep-curl.log")
-	build_step 7 "$(echo {80..100})" ../makedep-curl.log ../makedep-curl.error
+	cp ../../../build-components/opensslcompat.c ../../../build-components/opensslcompat.h src/ &> /dev/null
+	git apply ../../../build-components/opensslcompat.patch &> /dev/null
+
+	todo=(18 "BDB_INCLUDE_PATH=$(pwd)/../../win$2-db-4.8.30/build_mxe BDB_LIB_PATH=$(pwd)/../../win$2-db-4.8.30/build_mxe ../../../build-components/cross-compile-win.sh /usr/lib/mxe $target --qmake 2> ../qmake.error 1> ../qmake.log")
+	build_step 1 "$(echo {0..10})" ../qmake.log ../qmake.error
+
+	todo=(400 "../../../build-components/cross-compile-win.sh /usr/lib/mxe $target --compile-main 2> ../make-qt.error 1> ../make-qt.log")
+	build_step 3 "$(echo {10..100})" ../make-qt.log ../make-qt.error
 
 	popd
 	popd
 	popd
+}
+
+if [[ $choices =~ "win32" ]]; then
+	build_windows i686-w64-mingw32.static 32
 fi
 
 if [[ $choices =~ "win64" ]]; then
-	echo
-fi
-
-if [[ $choices =~ "win64" ]]; then
-	echo
+	build_windows x86_64-w64-mingw32.static 64
 fi
 
 if [[ $choices =~ "osx" ]]; then
