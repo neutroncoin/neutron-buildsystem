@@ -297,9 +297,32 @@ gather_releases() {
 		mkdir releases
 	fi
 
-	cp build/linux-$version/neutrond-x86_64.AppImage releases/neutrond-$version-x86_64.AppImage &> /dev/null
-	cp build/linux-$version/Neutron-qt-x86_64.AppImage releases/Neutron-qt-$version-x86_64.AppImage &> /dev/null
-	cp build/osx-$version/Neutron-qt-v3.0.4.dmg releases/ &> /dev/null
+	# Linux
+	if [[ -f build/linux-$version/neutrond-x86_64.AppImage ]]; then
+		cp build/linux-$version/neutrond-x86_64.AppImage releases/neutrond-$version-linux-x86_64.AppImage &> /dev/null
+	fi
+
+	if [[ -f build/linux-$version/Neutron-qt-x86_64.AppImage ]]; then
+		cp build/linux-$version/Neutron-qt-x86_64.AppImage releases/Neutron-qt-$version-linux-x86_64.AppImage &> /dev/null
+	fi
+
+	# OSX
+	if [[ -f build/osx-$version/Neutron-qt-$version.dmg ]]; then
+		cp build/osx-$version/Neutron-qt-$version.dmg releases/Neutron-qt-$version-osx.dmg &> /dev/null
+	fi
+
+	# Windows
+	if [[ -f build/win32-$version/neutron/release/Neutron-qt.exe ]]; then
+		clear
+		7z a -t7z -mx9 -y releases/Neutron-qt-$version-win32.7z ./build/win32-$version/neutron/release/Neutron-qt.exe
+		clear
+	fi
+
+	if [[ -f build/win64-$version/neutron/release/Neutron-qt.exe ]]; then
+		clear
+		7z a -t7z -mx9 -y releases/Neutron-qt-$version-win64.7z ./build/win64-$version/neutron/release/Neutron-qt.exe
+		clear
+	fi
 
 }
 
@@ -317,7 +340,7 @@ if [[ $version == "" ]]; then
 fi
 
 # First we collect all general dependencies....
-collect_dependencies wget git autoconf automake make pkg-config cmake g++
+collect_dependencies wget git autoconf automake make pkg-config cmake g++ p7zip-full
 
 # Next collect the dependencies for the active choices
 if [[ $choices =~ "linux" ]]; then
