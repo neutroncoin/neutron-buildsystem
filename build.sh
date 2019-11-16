@@ -174,6 +174,16 @@ install_dependencies() {
 
 			apt_command+="apt-get -qy update && apt-get -qy --no-install-recommends install $missingdeps"
 
+			# Strip the main function from libminiupnpc
+
+			if [[ $missingdeps =~ "mxe-i686-w64-mingw32.static-miniupnpc" ]]; then
+				apt_command+="&& /usr/lib/mxe/usr/bin/i686-w64-mingw32.static-ar dv /usr/lib/mxe/usr/i686-w64-mingw32.static/lib/libminiupnpc.a upnpc.c.obj &> /dev/null"
+			fi
+
+			if [[ $missingdeps =~ "mxe-x86-64-w64-mingw32.static-miniupnpc" ]]; then
+				apt_command+="&& /usr/lib/mxe/usr/bin/x86_64-w64-mingw32.static-ar dv /usr/lib/mxe/usr/x86_64-w64-mingw32.static/lib/libminiupnpc.a upnpc.c.obj &> /dev/null"
+			fi
+
 			if [[ $USER == "root" ]]; then
 				authenticated="true"
 				su -c "$apt_command"
