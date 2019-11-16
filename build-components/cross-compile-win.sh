@@ -67,10 +67,10 @@ if [[ "$@" =~ "--qmake" ]]; then
 		BOOST_THREAD_LIB_SUFFIX=_win32-mt \
 		BOOST_INCLUDE_PATH=$MXE_INCLUDE_PATH/boost \
 		BOOST_LIB_PATH=$MXE_LIB_PATH \
+		BDB_INCLUDE_PATH=$BDB_INCLUDE_PATH \
+		BDB_LIB_PATH=$BDB_LIB_PATH \
 		OPENSSL_INCLUDE_PATH=$MXE_INCLUDE_PATH/openssl \
 		OPENSSL_LIB_PATH=$MXE_LIB_PATH \
-		BDB_INCLUDE_PATH=$MXE_INCLUDE_PATH \
-		BDB_LIB_PATH=$MXE_LIB_PATH \
 		MINIUPNPC_INCLUDE_PATH=$MXE_INCLUDE_PATH \
 		MINIUPNPC_LIB_PATH=$MXE_LIB_PATH \
 		CURL_LIB_PATH=$MXE_LIB_PATH \
@@ -81,4 +81,12 @@ fi
 
 if [[ "$@" =~ "--compile-main" ]]; then
 	make -j$(nproc) -f Makefile.Release
+fi
+
+if [[ "$@" =~ "--berkleydb" ]]; then
+	CC=$arg_mxe_path/usr/bin/$arg_target-gcc \
+	CXX=$arg_mxe_path/usr/bin/$arg_target-g++ \
+	../dist/configure --disable-replication --enable-mingw --enable-cxx --host x86 \
+	--prefix=$arg_mxe_path/usr/$target
+	make -j$(nproc)
 fi
