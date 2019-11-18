@@ -21,12 +21,39 @@
 #
 # Small script to create MacOS X DMG archives
 
+# Improve Info.plist
+if grep -v -q LSMinimumSystemVersion "$1/Neutron-qt.app/Contents/Info.plist"; then
+	tmpfile=$(mktemp)
+	head -n -2 $1/Neutron-qt.app/Contents/Info.plist > $tmpfile
+	echo -e "\t<key>LSMinimumSystemVersion</key>" >> $tmpfile
+	echo -e "\t<string>10.11</string>" >> $tmpfile
+	echo -e "\t<key>NSPrincipalClass</key>" >> $tmpfile
+	echo -e "\t<string>NSApplication<string>" >> $tmpfile
+	echo -e "\t<key>NSSupportAutomaticGraphicsSwitching</key>" >> $tmpfile
+	echo -e "\t<true/>" >> $tmpfile
+	echo "</dict>" >> $tmpfile
+	echo "</plist>" >> $tmpfile
+	mv $tmpfile $1/Neutron-qt.app/Contents/Info.plist
+fi
+
+# Copy background image
+mkdir $1/.background &> /dev/null
+cp $1/../neutron/contrib/macdeploy/background.png $1/.background/ &> /dev/null
+
+# Create volume icon
+cp $1/Neutron-qt.app/Contents/Resources/neutron.icns $1/.VolumeIcon.icns &> /dev/null
+
+# Do not log file system events
+mkdir $1/.fseventsd &> /dev/null
+touch $1/.fseventsd/no_log &> /dev/null
+
 # 1312 instead of 1024 bytes. Seems some space needs to be reserved.
 # In the end it does not matter much, as the file is compressed.
-dd if=/dev/zero of=$2.dmg bs=1312 count=$(du  -s $1 | cut -f1)
+#dd if=/dev/zero of=$2.dmg bs=1312 count=$(du  -s $1 | cut -f1)
+#/sbin/mkfs.hfsplus -v "Neutron Wallet Installer" $2.dmg
+#hfsplus $2.dmg addall $1
+#hfsplus $2.dmg symlink Applications /Applications
 
-/sbin/mkfs.hfsplus -v "Neutron" $2.dmg
-hfsplus $2.dmg addall $1
-hfsplus $2.dmg symlink " " /Applications
+genisoimage -D -V "Neutron Wallet Installer" -allow-leading-dots -no-pad -r -apple -o $2.dmg $1
 dmg dmg $2.dmg $2-compressed.dmg
 mv -f $2-compressed.dmg $2.dmg

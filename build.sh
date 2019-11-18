@@ -580,8 +580,11 @@ if [[ $choices =~ "osx" ]]; then
 	sed -i 's/ -lQt5Network//g' Makefile
 	sed -i 's/ -lQt5Core//g' Makefile
 	ln -s /usr/include/c++/v1 $(pwd)/../../osx-osxcross/target/SDK/MacOSX10.11.sdk/usr/include/c++/v1 &> /dev/null
+
+	# Make sure libssl1.0 lib directory is first, otherwise it will link with a newer version of OpenSSL
+	pwdsed=$(echo $(pwd) | sed 's_/_\\/_g')
 	sed -i 's/ -I..\/..\/osx-osxcross\/target\/macports\/pkgs\/opt\/local\/include / -I..\/..\/osx-osxcross\/target\/macports\/pkgs\/opt\/local\/include\/openssl-1.0 -I..\/..\/osx-osxcross\/target\/macports\/pkgs\/opt\/local\/include /g' Makefile
-	sed -i 's/ -L\/home\/adamw\/neutron-buildsystem\/build\/osx-v3.0.4\/neutron\/..\/..\/osx-osxcross\/target\/macports\/pkgs\/opt\/local\/lib\/ / -L\/home\/adamw\/neutron-buildsystem\/build\/osx-v3.0.4\/neutron\/..\/..\/osx-osxcross\/target\/macports\/pkgs\/opt\/local\/lib\/openssl-1.0\/ -L\/home\/adamw\/neutron-buildsystem\/build\/osx-v3.0.4\/neutron\/..\/..\/osx-osxcross\/target\/macports\/pkgs\/opt\/local\/lib\/ /g' Makefile
+	sed -i "s/univalue -L$pwdsed\/..\/..\/osx-osxcross\/target\/macports\/pkgs\/opt\/local\/lib\//univalue -L$pwdsed\/..\/..\/osx-osxcross\/target\/macports\/pkgs\/opt\/local\/lib\/openssl-1.0\/ -L$pwdsed\/..\/..\/osx-osxcross\/target\/macports\/pkgs\/opt\/local\/lib\//g" Makefile
 
 	# Code fixes for clang and OSX
 	sed -i 's/clock_gettime( CLOCK_REALTIME,&tsp);/clock_serv_t cclock; mach_timespec_t mts; host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, \&cclock); clock_get_time(cclock, \&mts); mach_port_deallocate(mach_task_self(), cclock); tsp.tv_sec = mts.tv_sec; tsp.tv_nsec = mts.tv_nsec;/g' src/util.cpp
@@ -596,7 +599,7 @@ if [[ $choices =~ "osx" ]]; then
 	todo=(99 "unshare -r -m sh -c \"mount --bind ../osx-osxcross/target/macports/pkgs/opt /opt; INSTALLNAMETOOL=../osx-osxcross/target/bin/x86_64-apple-darwin15-install_name_tool OTOOL=../osx-osxcross/target/bin/x86_64-apple-darwin15-otool STRIP=../osx-osxcross/target/bin/x86_64-apple-darwin15-strip ../../build-components/macdeployqtplus -verbose 2 neutron/Neutron-qt.app -add-resources neutron/src/qt/locale 2> macdeployqtplus.error 1> macdeployqtplus.log\"")
 	build_step 5 "$(echo {85..90})" macdeployqtplus.log macdeployqtplus.error
 
-	todo=(1385 "PATH=$PATH:$(pwd)/../osx-libdmg-hfsplus/dmg:$(pwd)/../osx-libdmg-hfsplus/hfs ../../build-components/create-dmg.sh dist/Neutron-qt.app Neutron-qt-$version 2> create-dmg.error 1> create-dmg.log")
+	todo=(406 "PATH=$PATH:$(pwd)/../osx-libdmg-hfsplus/dmg:$(pwd)/../osx-libdmg-hfsplus/hfs ../../build-components/create-dmg.sh dist Neutron-qt-$version 2> create-dmg.error 1> create-dmg.log")
 	build_step 7 "$(echo {90..100})" create-dmg.log create-dmg.error
 
 	popd
