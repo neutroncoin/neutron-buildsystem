@@ -47,11 +47,11 @@ touch $1/.fseventsd/no_log &> /dev/null
 
 # 1312 instead of 1024 bytes. Seems some space needs to be reserved.
 # In the end it does not matter much, as the file is compressed.
-#dd if=/dev/zero of=$2.dmg bs=1312 count=$(du  -s $1 | cut -f1)
-#/sbin/mkfs.hfsplus -v "Neutron Wallet Installer" $2.dmg
-#hfsplus $2.dmg addall $1
-#hfsplus $2.dmg symlink Applications /Applications
+dd if=/dev/zero of=$2.dmg bs=1312 count=$(du  -s $1 | cut -f1)
+/sbin/mkfs.hfsplus -v "Neutron Wallet Installer" $2.dmg
+hfsplus $2.dmg addall $1
+hfsplus $2.dmg symlink Applications /Applications
 
-genisoimage -D -V "Neutron Wallet Installer" -allow-leading-dots -no-pad -r -apple -o $2.dmg $1
+#genisoimage -D -V "Neutron Wallet Installer" -allow-leading-dots -no-pad -r -apple -o $2.dmg $1
 dmg dmg $2.dmg $2-compressed.dmg
 mv -f $2-compressed.dmg $2.dmg
