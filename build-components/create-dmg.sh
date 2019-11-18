@@ -27,8 +27,6 @@ if grep -v -q LSMinimumSystemVersion "$1/Neutron-qt.app/Contents/Info.plist"; th
 	head -n -2 $1/Neutron-qt.app/Contents/Info.plist > $tmpfile
 	echo -e "\t<key>LSMinimumSystemVersion</key>" >> $tmpfile
 	echo -e "\t<string>10.11</string>" >> $tmpfile
-	echo -e "\t<key>NSPrincipalClass</key>" >> $tmpfile
-	echo -e "\t<string>NSApplication<string>" >> $tmpfile
 	echo -e "\t<key>NSSupportAutomaticGraphicsSwitching</key>" >> $tmpfile
 	echo -e "\t<true/>" >> $tmpfile
 	echo "</dict>" >> $tmpfile
