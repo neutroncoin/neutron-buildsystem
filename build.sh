@@ -307,33 +307,37 @@ gather_releases() {
 		mkdir releases
 	fi
 
-	# Linux
-	if [[ -f build/linux-$version/neutrond-x86_64.AppImage ]]; then
-		cp build/linux-$version/neutrond-x86_64.AppImage releases/neutrond-$version-linux-x86_64.AppImage &> /dev/null
+	if [[ $choices =~ "linux" ]]; then
+		if [[ -f build/linux-$version/neutrond-x86_64.AppImage ]]; then
+			cp build/linux-$version/neutrond-x86_64.AppImage releases/neutrond-$version-linux-x86_64.AppImage &> /dev/null
+		fi
+
+		if [[ -f build/linux-$version/Neutron-qt-x86_64.AppImage ]]; then
+			cp build/linux-$version/Neutron-qt-x86_64.AppImage releases/Neutron-qt-$version-linux-x86_64.AppImage &> /dev/null
+		fi
 	fi
 
-	if [[ -f build/linux-$version/Neutron-qt-x86_64.AppImage ]]; then
-		cp build/linux-$version/Neutron-qt-x86_64.AppImage releases/Neutron-qt-$version-linux-x86_64.AppImage &> /dev/null
+	if [[ $choices =~ "osx" ]]; then
+		if [[ -f build/osx-$version/Neutron-qt-$version.dmg ]]; then
+			cp build/osx-$version/Neutron-qt-$version.dmg releases/Neutron-qt-$version-osx.dmg &> /dev/null
+		fi
 	fi
 
-	# OSX
-	if [[ -f build/osx-$version/Neutron-qt-$version.dmg ]]; then
-		cp build/osx-$version/Neutron-qt-$version.dmg releases/Neutron-qt-$version-osx.dmg &> /dev/null
+	if [[ $choices =~ "win32" ]]; then
+		if [[ -f build/win32-$version/neutron/release/Neutron-qt.exe ]]; then
+			clear
+			7z a -t7z -mx9 -y releases/Neutron-qt-$version-win32.7z ./build/win32-$version/neutron/release/Neutron-qt.exe
+			clear
+		fi
 	fi
 
-	# Windows
-	if [[ -f build/win32-$version/neutron/release/Neutron-qt.exe ]]; then
-		clear
-		7z a -t7z -mx9 -y releases/Neutron-qt-$version-win32.7z ./build/win32-$version/neutron/release/Neutron-qt.exe
-		clear
+	if [[ $choices =~ "win64" ]]; then
+		if [[ -f build/win64-$version/neutron/release/Neutron-qt.exe ]]; then
+			clear
+			7z a -t7z -mx9 -y releases/Neutron-qt-$version-win64.7z ./build/win64-$version/neutron/release/Neutron-qt.exe
+			clear
+		fi
 	fi
-
-	if [[ -f build/win64-$version/neutron/release/Neutron-qt.exe ]]; then
-		clear
-		7z a -t7z -mx9 -y releases/Neutron-qt-$version-win64.7z ./build/win64-$version/neutron/release/Neutron-qt.exe
-		clear
-	fi
-
 }
 
 trap cleanup EXIT
