@@ -377,7 +377,7 @@ if [[ $choices =~ "win64" ]]; then
 fi
 
 if [[ $choices =~ "osx" ]]; then
-	collect_dependencies clang libxml2-dev libc++-dev libbz2-dev hfsprogs
+	collect_dependencies clang libxml2-dev libc++-dev libbz2-dev hfsprogs genisoimage
 fi
 
 install_dependencies
