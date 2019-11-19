@@ -150,9 +150,15 @@ install_dependencies() {
 	authenticated="false"
 
 	if [ -n "$missingdeps" ]; then
-		dialog --yesno "The dependencies '$missingdeps' are missing and need to be installed. Would you like to install them?" 8 70
+		if [[ $1 == "text" ]]; then
+			echo -n "The dependencies '$missingdeps' are needed to run this script. Would you like to install them? (y/n) "
+			read -n1 -r reply
+			echo ""
+		else
+			dialog --yesno "The dependencies '$missingdeps' are missing and need to be installed. Would you like to install them?" 8 70
+		fi
 
-		if [ $? -eq 0 ]; then
+		if [[ ( $? -eq 0 && $1 != "text" )  || $reply =~ ^[Yy]$ ]]; then
 			apt_command=""
 
 			if [ ! -f /etc/apt/sources.list.d/mxe.list ] && [[ $choices =~ "win32" || $choices =~ "win64" ]]; then
@@ -207,7 +213,12 @@ install_dependencies() {
 						sudo $apt_command
 					fi
 				else
-					dialog --msgbox "You are not in the sudo group and can therefore not install any dependencies. Please install the required dependencies as super user before executing this script." 8 70
+					notsudo="You are not in the sudo group and can therefore not install any dependencies. Please inst    all the required dependencies as super user before executing this script."
+					if [[ $1 == "text" ]]; then
+						echo $notsudo
+					else
+						dialog --msgbox "$notsudo" 8 70
+					fi
 				fi
 
 				if [[ $authenticated == "false" ]]; then
@@ -215,6 +226,11 @@ install_dependencies() {
 				fi
 			fi
 		else
+			exit 1
+		fi
+
+		if [ $? -eq 1 ]; then
+			echo "Failed to install required  dependencies... Exiting build environment."
 			exit 1
 		fi
 	fi
@@ -339,6 +355,11 @@ gather_releases() {
 		fi
 	fi
 }
+
+# Check for "dialog" before we try to use it
+collect_dependencies dialog
+install_dependencies text
+missing_deps=""
 
 trap cleanup EXIT
 dialog --textbox build-components/welcome.txt 22 70
