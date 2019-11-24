@@ -213,7 +213,7 @@ install_dependencies() {
 						sudo $apt_command
 					fi
 				else
-					notsudo="You are not in the sudo group and can therefore not install any dependencies. Please inst    all the required dependencies as super user before executing this script."
+					notsudo="You are not in the sudo group and can therefore not install any dependencies. Please install the required dependencies as super user before executing this script."
 					if [[ $1 == "text" ]]; then
 						echo $notsudo
 					else
