@@ -356,6 +356,27 @@ gather_releases() {
 	fi
 }
 
+check_compatibility() {
+	supported="Debian Stretch, Ubuntu Bionic, Ubuntu Trusty, Ubuntu Xenial"
+
+	if [[ ! ${supported,,} =~ "${dist,,} ${dist_version,,}" ]]; then
+		cwarning="WARNING: Unsupported distribution"
+		ctext="The build system has detected the following host distribution:\n\Zb$dist $dist_version\Zn\n\nPlease note that this distribution is unsupported by the build system and may cause the build environment to fail during the compilation of Neutron. At the moment, the build system supports the following distributions and versions: \Zb$supported\Zn\n\nContinuing from this point may or may not work depending on the compatibility of the host distribution."
+		if hash dialog &> /dev/null; then
+			dialog --colors --title "$cwarning" --msgbox "$ctext" 16 70
+		else
+			echo -e "$cwarning\n"
+			ctext=${ctext//\\Zb/}
+			echo -e "${ctext//\\Zn/}"
+			echo -n "Please press any key to continue... "
+			read -n1
+		fi
+	fi
+}
+
+#Can this version and distro of Linux run this build system?
+check_compatibility
+
 # Check for "dialog" before we try to use it
 collect_dependencies dialog
 install_dependencies text
