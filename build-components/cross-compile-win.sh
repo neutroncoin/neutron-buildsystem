@@ -75,7 +75,7 @@ if [[ "$@" =~ "--qmake" ]]; then
 		MINIUPNPC_LIB_PATH=$MXE_LIB_PATH \
 		CURL_LIB_PATH=$MXE_LIB_PATH \
 		QMAKE_LRELEASE=$arg_mxe_path/usr/$arg_target/qt5/bin/lrelease \
-		MXE=1 USE_QRCODE=1 USE_UPNP=1 RELEASE=1 USE_BUILD_INFO=1 \
+		MXE=1 USE_QRCODE=1 USE_UPNP=1 RELEASE=1 USE_BUILD_INFO=1 HOST=$2 \
 		neutron-qt.pro
 fi
 

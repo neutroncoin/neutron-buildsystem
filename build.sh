@@ -506,6 +506,8 @@ build_windows() {
 	cp ../../../build-components/opensslcompat.c ../../../build-components/opensslcompat.h src/ &> /dev/null
 	git apply ../../../build-components/opensslcompat.patch &> /dev/null
 
+	sed -i 's/i686-w64-mingw32.static/$$HOST/g' neutron-qt.pro
+
 	todo=(18 "BDB_INCLUDE_PATH=$(pwd)/../../win$2-db-4.8.30/build_mxe BDB_LIB_PATH=$(pwd)/../../win$2-db-4.8.30/build_mxe ../../../build-components/cross-compile-win.sh /usr/lib/mxe $target --qmake 2> ../qmake.error 1> ../qmake.log")
 	build_step 1 "$(echo {0..10})" ../qmake.log ../qmake.error
 
