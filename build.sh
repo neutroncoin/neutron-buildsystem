@@ -208,7 +208,7 @@ install_dependencies() {
 				if [ $? -eq 0 ]; then
 					echo Please provide your password to install dependencies as administrator
 
-					if [ $? -eq 0]; then
+					if [ $? -eq 0 ]; then
 						authenticated="true"
 						sudo $apt_command
 					fi
