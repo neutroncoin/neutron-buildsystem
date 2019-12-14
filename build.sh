@@ -62,7 +62,7 @@ choose_tags() {
 		return
 	fi
 
-	tags="$(git ls-remote --tags $neutron_repo | sed -n 's_^.*/\([^/}]*\)$_\1_p') master"
+	tags="$(git ls-remote --tags $neutron_repo | sed -n 's_^.*/\([^/}]*\)$_\1_p' | sort -V) master"
 
 	for i in $tags; do
 		if [ $i = "master" ]; then
