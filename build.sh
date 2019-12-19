@@ -401,7 +401,7 @@ collect_dependencies wget git autoconf automake make pkg-config cmake g++ p7zip-
 # Next collect the dependencies for the active choices
 if [[ $choices =~ "linux" ]]; then
 	collect_dependencies build-essential libboost-all-dev libssl1.0-dev libdb4.8++-dev \
-	                     libminiupnpc-dev zlib1g-dev qt5-default \
+	                     libdb4.8-dev libminiupnpc-dev zlib1g-dev qt5-default \
 	                     qttools5-dev-tools qt5-qmake
 fi
 
