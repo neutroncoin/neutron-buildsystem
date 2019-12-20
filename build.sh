@@ -396,11 +396,11 @@ if [[ $version == "" ]]; then
 fi
 
 # First we collect all general dependencies....
-collect_dependencies wget git autoconf automake make pkg-config cmake g++ p7zip-full
+collect_dependencies wget git autoconf automake make pkg-config cmake g++ p7zip-full libtool build-essential
 
 # Next collect the dependencies for the active choices
 if [[ $choices =~ "linux" ]]; then
-	collect_dependencies build-essential libboost-all-dev libssl1.0-dev libdb4.8++-dev \
+	collect_dependencies libboost-all-dev libssl1.0-dev libdb4.8++-dev \
 	                     libdb4.8-dev libminiupnpc-dev zlib1g-dev qt5-default \
 	                     qttools5-dev-tools qt5-qmake
 fi
