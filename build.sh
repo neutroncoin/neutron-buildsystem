@@ -504,7 +504,7 @@ build_windows() {
 	pushd neutron
 
 	cp ../../../build-components/opensslcompat.c ../../../build-components/opensslcompat.h src/ &> /dev/null
-	git apply ../../../build-components/opensslcompat.patch &> /dev/null
+	git apply ../../../build-components/opensslcompat.patch &> ../patch.log
 
 	sed -i 's/i686-w64-mingw32.static/$$HOST/g' neutron-qt.pro
 
