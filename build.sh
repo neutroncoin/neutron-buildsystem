@@ -396,7 +396,7 @@ if [[ $version == "" ]]; then
 fi
 
 # First we collect all general dependencies....
-collect_dependencies wget git autoconf automake make pkg-config cmake g++ p7zip-full libtool build-essential
+collect_dependencies wget git autoconf automake cmake make pkg-config cmake g++ p7zip-full libtool build-essential
 
 # Next collect the dependencies for the active choices
 if [[ $choices =~ "linux" ]]; then
