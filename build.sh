@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Copyright (c) 2017-2018 The Swipp developers
-# Copyright (c) 2019 The Neutron developers
+# Copyright (c) 2019-2020 The Neutron developers
 #
 # This file is part of The Neutron Build System.
 #
@@ -511,7 +511,7 @@ build_windows() {
 	todo=(18 "BDB_INCLUDE_PATH=$(pwd)/../../win$2-db-4.8.30/build_mxe BDB_LIB_PATH=$(pwd)/../../win$2-db-4.8.30/build_mxe ../../../build-components/cross-compile-win.sh /usr/lib/mxe $target --qmake 2> ../qmake.error 1> ../qmake.log")
 	build_step 1 "$(echo {0..10})" ../qmake.log ../qmake.error
 
-	todo=(400 "../../../build-components/cross-compile-win.sh /usr/lib/mxe $target --compile-main 2> ../make-qt.error 1> ../make-qt.log")
+	todo=(360 "../../../build-components/cross-compile-win.sh /usr/lib/mxe $target --compile-main 2> ../make-qt.error 1> ../make-qt.log")
 	build_step 3 "$(echo {10..100})" ../make-qt.log ../make-qt.error
 
 	popd
