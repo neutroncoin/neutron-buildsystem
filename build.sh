@@ -178,7 +178,7 @@ install_dependencies() {
 				apt_command+="apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C70EF1F0305A1ADB9986DBD8D46F45428842CE5E && "
 			fi
 
-			apt_command+="apt-get -qy update && apt-get -qy --no-install-recommends install $missingdeps"
+			apt_command+="apt-get -qy update && apt-get -qy --no-install-recommends --allow-unauthenticated install $missingdeps"
 
 			# Strip the main function from libminiupnpc
 
