@@ -168,6 +168,10 @@ install_dependencies() {
 
 			tmp_dist_version=$dist_version
 
+			if [[ $dist_version == "stretch" ]] || [[ $dist_version == "xenial" ]]; then
+				apt_command+="printf \"deb http://ftp.debian.org/debian stretch-backports main\ndeb http://ftp.debian.org/debian stretch-backports-sloppy main\" > /etc/apt/sources.list.d/backports.list && printf \"Package: libarchive13\nPin: release a=stretch-backports-sloppy\nPin-Priority: 900\n\nPackage: cmake\nPin: release a=stretch-backports\nPin-Priority: 900\n\nPackage: libuv1\nPin: release a=stretch-backports\nPin-Priority: 900\n\nPackage: cmake-data\nPin: release a=stretch-backports\nPin-Priority: 900\n\" > /etc/apt/preferences.d/99debian-backports && "
+			fi
+
 			# Special side-case to support Debian
 			if [[ $dist == "Debian" ]]; then
 				tmp_dist_version="bionic"
