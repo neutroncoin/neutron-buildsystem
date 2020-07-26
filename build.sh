@@ -24,6 +24,7 @@
 
 neutron_repo="https://github.com/neutroncoin/neutron.git"
 osxcross_repo="https://github.com/tpoechtrager/osxcross.git"
+osxcross_version="d6acb50babc2904ccc1e473723f2551ad211e6ea"
 osx_sdk="https://github.com/phracker/MacOSX-SDKs/releases/download/MacOSX10.11.sdk/MacOSX10.11.sdk.tar.xz"
 hfsplus_repo="https://github.com/andreas56/libdmg-hfsplus.git"
 dist=$(lsb_release -i | cut -f2 -d$'\t')
@@ -133,6 +134,20 @@ clone_toolchain() {
                         exit 1
                 fi
         fi
+
+	if [[ $3 != "" ]]; then
+		pushd build
+		pushd $1
+		git checkout $3
+
+		if (($? != 0)); then
+			dialog --msgbox "Failed to check out version $3" 7 70
+			exit 1
+		fi
+
+		popd
+		popd
+	fi
 }
 
 collect_dependencies() {
@@ -545,7 +560,7 @@ if [[ $choices =~ "osx" ]]; then
 	       "Building libdmg-hfsplus"      8)
 
 	clone osx neutron $neutron_repo
-	clone_toolchain osx-osxcross $osxcross_repo
+	clone_toolchain osx-osxcross $osxcross_repo $osxcross_version
 	clone_toolchain osx-libdmg-hfsplus $hfsplus_repo
 
 	pushd build
